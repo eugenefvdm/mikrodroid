@@ -1,8 +1,6 @@
 /** 
  * 
- * Entry point for application version 0.9.5
- * 
- * by Eugene  
+ * Entry point for the Mikrodroid application
  * 
  */
 
@@ -40,9 +38,8 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
- * Mikrodroid v2 Main
  * 
- * @author Eugene
+ * Main extends ListActivity and shows a list of devices
  *
  */
 public class Main extends ListActivity {

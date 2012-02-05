@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2011 Snowball 
+ * 
+ * Copyright (C) 2011 Snowball
+ *  
  */
 
 package com.mikrodroid.router.ui;
@@ -22,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-// import android.widget.Toast;
+import android.widget.Toast;
 
 /**
  * NavigationChildren gets launched from NavigationRoot as soon as you start browsing a root menu
@@ -34,8 +36,11 @@ import android.widget.TextView;
  */
 public class NavigationChildren extends ListActivity {	
 	
-	private static final String TAG = "NavigationChildren.java";
+	private static final String TAG = "NavigationChildren";
 
+	/**
+	 * 
+	 */
 	private ArrayList<MenuObject> mSecondLevelNav;
 	
 	/**
@@ -63,10 +68,10 @@ public class NavigationChildren extends ListActivity {
 //			Toast.makeText(this, "No children", Toast.LENGTH_SHORT).show();
 //			mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
 //		}
-		// isPrintable has not been activated for now
+//		// isPrintable has not been activated for now
 //		if (Main.currentMenu.isPrintable) {
-			//mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
-		//}
+//			mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
+//		}
 		
 		MenuAdapter routerAdapter = new MenuAdapter(this, R.layout.device_row, mSecondLevelNav);
 		

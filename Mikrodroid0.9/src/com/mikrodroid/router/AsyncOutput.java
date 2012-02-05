@@ -1,6 +1,6 @@
 /**
  * 
- * Display router configuration information
+ * AsyncOutput.java
  * 
  */
 package com.mikrodroid.router;
@@ -29,9 +29,13 @@ import android.widget.Toast;
 
 import com.mikrodroid.router.api.MikrotikApi;
 
+/**
+ * Asynchronous class that interrogates a MikroTik device and displays it's configuration information
+ *
+ */
 public class AsyncOutput extends ListActivity {
 	
-	private static final String TAG = "AsyncOutput.java";
+	private static final String TAG = "AsyncOutput";
 		
 	private AsyncReceiver task = null;
 	
@@ -54,10 +58,15 @@ public class AsyncOutput extends ListActivity {
 	 */
 	private boolean isMultiLine = false;
 	
+	private boolean isFinalMenu = false;
+	
 	private String ipAddress;
 	
 	private ArrayList<ConfigItem> mItemValueList;
 	
+	/**
+	 * Convenience field that is assigned to current menu
+	 */
 	private MenuObject mCurrentMenu;
 	
 	private static final int MENU_FILTER = Menu.FIRST;
@@ -80,6 +89,12 @@ public class AsyncOutput extends ListActivity {
 			this.isMultiLine = true;
 		}
 		
+		// Is this menu has no children then add a flag to do an automatic print
+		// The If statement was copied from NavigationChildren 
+		if (mCurrentMenu.getChildren(Main.menuList).size() == 0) {			
+			this.isFinalMenu = true;
+		}
+		
 		mItemListView = getListView(); 
 		mCollectionListView = getListView();
 		
@@ -92,6 +107,8 @@ public class AsyncOutput extends ListActivity {
 		
 		if (propList != null) {
 			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "\n=.proplist=.id," + propList;	
+		} else if (this.isFinalMenu ==true) {
+			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
 		} else {
 			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu);
 		}

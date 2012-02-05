@@ -2,7 +2,7 @@
 <resources>
 
 	<string name="hello">Hello World!</string>
-    <string name="app_name">Mikrodroid by Snowball</string>
+    <string name="app_name">Mikrodroid</string>
         
     <string name="no_devices">Use menu to add devices</string>
     

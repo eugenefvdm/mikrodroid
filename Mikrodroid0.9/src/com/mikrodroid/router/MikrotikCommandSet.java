@@ -27,7 +27,7 @@ import android.util.Log;
  */
 public class MikrotikCommandSet {
 
-	private static final String TAG = "MikrotikCommandSet.java";
+	private static final String TAG = "MikrotikCommandSet";
 	
 	/**
 	 * Total number of menus that starts with a "/"
@@ -100,6 +100,8 @@ public class MikrotikCommandSet {
 			   menu4.setProplist("user,address,uptime");
 			   menuList.add(menu4);
 			   
+			  
+			   
 //			   MenuObject menu2 = new MenuObject();								
 //			   menu2.setPath("/");
 //			   menu2.setName("user");				
@@ -109,6 +111,12 @@ public class MikrotikCommandSet {
 		
 			   setParents();
 			   setFriendlyNames();
+			   
+			   MenuObject ipaddress = new MenuObject();
+			   ipaddress = this.findMenu("/ip address");
+			   // TODO Add null handling if ipaddress does not return
+			   ipaddress.setMultiLine(true);
+			   
 			} catch (FileNotFoundException e) {			 
 			   e.printStackTrace();			 
 			} catch (IOException e){			 
@@ -147,17 +155,8 @@ public class MikrotikCommandSet {
 				menu.setPath(menuPath);
 				menu.setName(menuName);				
 				menu.setFullPath(menuPath + " " + menuName);
-				// TODO Experiment to see if I can get a "Print" menu at the top of each menu
-				//menu.setPrintable(true);
+				//Log.v(TAG, "Adding full path " + menu.getFullPath());
 				menuList.add(menu);
-				
-//				// Add print menu everywhere
-//				MenuObject menu2 = new MenuObject();								
-//				menu2.setPath(menuPath + " " + menuName);
-//				menu2.setName("print");				
-//				menu2.setFullPath(menuPath + " " + menuName + " " + "print");
-//				menu2.setMultiLine(true);
-//				menuList.add(menu2);
 				
 			}
 			lineInput = menuPath;
@@ -209,6 +208,17 @@ public class MikrotikCommandSet {
 			}
 		}
 		Log.e(TAG, "Fatal error: Could not find a parent for " + child.fullPath);
+		// This should never happen
+		return null;
+	}
+	
+	public MenuObject findMenu(String path) {
+		for (MenuObject m : menuList) {
+			if (m.getFullPath().equals(path)) {
+				return m;
+			}
+		}
+		Log.e(TAG, "Could not find menu `" + path + "` in findMenu");
 		// This should never happen
 		return null;
 	}
