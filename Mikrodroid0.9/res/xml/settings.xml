@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- See API demos -->
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+            android:title="@string/pref_cat_general">
+
+        <EditTextPreference
+                android:key="pref_global_username"
+                android:title="@string/pref_title_global_username"
+                android:summary="@string/pref_summary_global_username"
+                android:dialogTitle="@string/pref_dialog_global_username"
+		/>
+		
+		 <EditTextPreference
+                android:key="pref_global_password"
+                android:title="@string/pref_title_global_password"
+                android:summary="@string/pref_summary_global_password"
+                android:dialogTitle="@string/pref_dialog_global_password"
+                android:password="true"                
+		/>
+                
+    </PreferenceCategory>
+    
+	<PreferenceCategory
+            android:title="@string/pref_cat_system">
+
+        <EditTextPreference
+                android:key="pref_api_port"
+                android:title="@string/pref_title_api_port"
+                android:summary="@string/pref_summary_api_port"
+                android:dialogTitle="@string/pref_dialog_api_port"
+		/>
+				 
+    </PreferenceCategory>
+    
+</PreferenceScreen>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="hello">Hello World!</string>
+    <string name="app_name">Mikrodroid by Snowball</string>
+        
+    <string name="no_devices">Use menu to add devices</string>
+    
+    <string name="menu_add_device">Add Device</string>
+    <string name="menu_bootstrap_routeros">Bootstrap RouterOS</string>
+    <string name="menu_settings">Settings</string>
+    
+	<string name="text_ip_address">IP Address</string>
+	<string name="text_name">Name</string>
+	<string name="text_use_global_username">Global username/password</string>
+	<string name="text_username">Username</string>
+	<string name="text_password">Password</string>	
+	
+	<string name="button_confirm">Confirm</string>
+      
+	<string name="text_type">Type</string>
+	
+	<string name="window_edit_device">Edit Device</string>
+	
+	<string name="menu_ctx_login">Login</string>
+    <string name="menu_ctx_edit">Edit</string>
+    <string name="menu_ctx_delete">Delete</string>
+    
+    <string name="login_failed">Invalid username or password</string>
+    
+    <string name="invalid_login_type">Cannot login to this type of device</string>
+    
+    <string name="menu_filter">Filter</string>
+    
+    <string name="pref_cat_general">General</string>
+    
+    <string name="pref_title_global_username">Global Username</string>
+    <string name="pref_summary_global_username">Username Summary</string>    
+    <string name="pref_dialog_global_username">Enter Global Username</string>                
+    
+    <string name="pref_title_global_password">Global Password</string>
+    <string name="pref_summary_global_password">******************</string>    
+    <string name="pref_dialog_global_password">Enter Global Password</string>
+    
+    <string name="pref_cat_system">System</string>
+    
+    <string name="pref_title_api_port">MikroTik API Port</string>
+    <string name="pref_summary_api_port">MikroTik API Port Summary</string>    
+    <string name="pref_dialog_api_port">Enter MikroTik API Port</string>
+
+</resources>
