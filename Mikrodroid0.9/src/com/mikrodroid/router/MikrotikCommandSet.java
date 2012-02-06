@@ -117,6 +117,19 @@ public class MikrotikCommandSet {
 			   // TODO Add null handling if ipaddress does not return
 			   ipaddress.setMultiLine(true);
 			   
+			   
+			   MenuObject routerboard = new MenuObject();
+			   routerboard = this.findMenu("/system routerboard");
+			   routerboard.setPrintable(true);
+			   routerboard.setMultiLine(false);
+			   
+			   MenuObject rbsettings = new MenuObject();
+			   rbsettings = this.findMenu("/system routerboard settings");
+			   rbsettings.setMultiLine(false);
+			   
+			   
+			   
+			   
 			} catch (FileNotFoundException e) {			 
 			   e.printStackTrace();			 
 			} catch (IOException e){			 
@@ -155,7 +168,7 @@ public class MikrotikCommandSet {
 				menu.setPath(menuPath);
 				menu.setName(menuName);				
 				menu.setFullPath(menuPath + " " + menuName);
-				//Log.v(TAG, "Adding full path " + menu.getFullPath());
+				menu.setMultiLine(true);				
 				menuList.add(menu);
 				
 			}

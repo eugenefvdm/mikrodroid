@@ -91,7 +91,7 @@ public class AsyncOutput extends ListActivity {
 		
 		// Is this menu has no children then add a flag to do an automatic print
 		// The If statement was copied from NavigationChildren 
-		if (mCurrentMenu.getChildren(Main.menuList).size() == 0) {			
+		if (mCurrentMenu.getChildren(Main.menuList).size() == 0 || mCurrentMenu.getPrintable() == true) {			
 			this.isFinalMenu = true;
 		}
 		

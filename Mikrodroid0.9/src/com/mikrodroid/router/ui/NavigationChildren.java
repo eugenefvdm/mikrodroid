@@ -1,6 +1,4 @@
 /*
- * 
- * Copyright (C) 2011 Snowball
  *  
  */
 
@@ -24,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 /**
  * NavigationChildren gets launched from NavigationRoot as soon as you start browsing a root menu
@@ -68,7 +66,12 @@ public class NavigationChildren extends ListActivity {
 //			Toast.makeText(this, "No children", Toast.LENGTH_SHORT).show();
 //			mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
 //		}
-//		// isPrintable has not been activated for now
+		// isPrintable has not been activated for now
+
+		if (Main.currentMenu.isPrintable) {
+			mSecondLevelNav = Main.currentMenu.addPrintItem(mSecondLevelNav);
+		}
+		
 //		if (Main.currentMenu.isPrintable) {
 //			mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
 //		}
@@ -86,7 +89,7 @@ public class NavigationChildren extends ListActivity {
 		MenuObject menu = mSecondLevelNav.get(position);
 		
 		
-			if (menu.getName() == "Print") {
+			if (menu.getName() == "PRINT") {
 			
 				Log.d(TAG, "This is a PRINT node");
 				Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 

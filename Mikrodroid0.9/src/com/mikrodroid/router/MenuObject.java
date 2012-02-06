@@ -38,7 +38,7 @@ public class MenuObject {
 	
 	String fullPath;
 		
-	boolean isPrintable;
+	public boolean isPrintable;
 	boolean isFinalNode;	
 	boolean isMultiLine;
 	
