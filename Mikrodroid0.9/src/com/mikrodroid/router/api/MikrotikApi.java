@@ -340,7 +340,7 @@ public class MikrotikApi extends Thread {
 
 		try {
 			conn.connect("192.168.0.2");
-			if (conn.login("eugene", "moresecure69")) {
+			if (conn.login("admin", "commandsdownload")) {
 				conn.enterLocalPassiveMode(); // Android needs this line
 				conn.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 				conn.retrieveFile(remoteFile, localFile);
