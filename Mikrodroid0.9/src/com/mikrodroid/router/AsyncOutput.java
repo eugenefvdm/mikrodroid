@@ -110,6 +110,7 @@ public class AsyncOutput extends ListActivity {
 		} else if (this.isFinalMenu ==true) {
 			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
 		} else {
+			Log.v(TAG, "Calling getCommandHieracrhy(mCurrentMenu)");
 			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu);
 		}
 		

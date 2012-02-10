@@ -115,7 +115,7 @@ public class DevicesDbAdapter extends Db {
     }
     
     /**
-     * Update the device with minimal arguments when changing name or status
+     * Update device with minimal arguments when changing name or status
      * 
      * @param id
      * @param ipAddress
@@ -123,7 +123,7 @@ public class DevicesDbAdapter extends Db {
      * @param status
      * @return
      */
-    public boolean updateDevice(long id, String ipAddress, String name, String status) {
+    public boolean updateDevice(long id, String name, String ipAddress, String status) {
         ContentValues args = new ContentValues();
         args.put(Db.KEY_DEVICES_NAME, name);
         args.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);                

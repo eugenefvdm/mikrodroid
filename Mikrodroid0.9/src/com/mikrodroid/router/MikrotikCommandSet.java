@@ -127,6 +127,9 @@ public class MikrotikCommandSet {
 			   rbsettings = this.findMenu("/system routerboard settings");
 			   rbsettings.setMultiLine(false);
 			   
+			   MenuObject store = new MenuObject();
+			   store = this.findMenu("/store");
+			   store.setMultiLine(true);
 			   
 			   
 			   

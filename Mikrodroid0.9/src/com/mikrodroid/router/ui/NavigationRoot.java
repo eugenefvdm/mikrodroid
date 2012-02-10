@@ -15,6 +15,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import android.widget.TextView;
  *
  */
 public class NavigationRoot extends ListActivity {
+	
+	private static final String TAG = "NavigationRoot";
 	
 	private String mIpAddress;
 
@@ -52,8 +55,14 @@ public class NavigationRoot extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		// Main.currentMenu = Main.menuList.getRootMenus().get(position);
+
 		Main.currentMenu = Main.rootMenuList.get(position);
+
+		// If this menu has no children then jump strait to output
+		if (Main.currentMenu.getChildren(Main.menuList).size() == 0) {
+			Log.d(TAG, "In constructor menu has no children");
+		}
+				
 		Intent i = new Intent(this, NavigationChildren.class);
 		i.putExtra("ipAddress", mIpAddress);
 		startActivity(i);		

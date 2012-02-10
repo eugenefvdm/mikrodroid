@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-//import android.widget.Toast;
+import android.widget.Toast;
 
 /**
  * NavigationChildren gets launched from NavigationRoot as soon as you start browsing a root menu
@@ -60,15 +60,21 @@ public class NavigationChildren extends ListActivity {
 						
 		mSecondLevelNav = Main.currentMenu.getChildren(Main.menuList);
 		
-		Log.v(TAG, "Child navigation to " + Main.currentMenu.getName() + " menu");
+		Log.d(TAG, "Navigation to " + Main.currentMenu.getName() + " menu");
 		
-//		if (mChildMenuList.size() == 0) {
-//			Toast.makeText(this, "No children", Toast.LENGTH_SHORT).show();
+		if (mSecondLevelNav.size() == 0) {
+			Log.v(TAG, "In constructor menu has no children");
+			// Toast.makeText(this, "Menu has no children", Toast.LENGTH_SHORT).show();
+			// Main.currentMenu = menu;
+			Intent i = new Intent(this, AsyncOutput.class);
+			i.putExtra("ipAddress", this.mIpAddress);
+			startActivity(i);
 //			mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
-//		}
+		}
 		// isPrintable has not been activated for now
 
 		if (Main.currentMenu.isPrintable) {
+			Log.v(TAG, "This menu is printable");
 			mSecondLevelNav = Main.currentMenu.addPrintItem(mSecondLevelNav);
 		}
 		
@@ -88,31 +94,26 @@ public class NavigationChildren extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		MenuObject menu = mSecondLevelNav.get(position);
 		
-		
-			if (menu.getName() == "PRINT") {
-			
-				Log.d(TAG, "This is a PRINT node");
-				Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 
-				Intent i = new Intent(this, AsyncOutput.class);
-				i.putExtra("ipAddress", mIpAddress);
-				startActivity(i);
-			
-		} else if (menu.getChildren(Main.menuList).size() == 0) {
-			
-			Log.d(TAG, "This menu has no children");
+		if (menu.getName() == "PRINT") {
+			Log.v(TAG, "This is a PRINT node");
+			Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 
+			Intent i = new Intent(this, AsyncOutput.class);
+			i.putExtra("ipAddress", mIpAddress);
+			startActivity(i);			
+		} else if (menu.getChildren(Main.menuList).size() == 0) {			
+			Log.v(TAG, "This menu has no children");
 			Main.currentMenu = menu;
 			Intent i = new Intent(this, AsyncOutput.class);
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);
-			
-			
 		} else if (menu.getFinalNode()) {
-			Log.d(TAG, "This is a final node");
+			Log.v(TAG, "This is a final node");
 			Main.currentMenu = menu;
 			Intent i = new Intent(this, AsyncOutput.class);
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);		
-		} else { // Iterate to self				
+		} else { // Iterate to self		
+			Log.v(TAG, "Iterating to self");
 			Main.currentMenu = menu;
 			Intent i = new Intent(this, NavigationChildren.class);
 			i.putExtra("ipAddress", this.mIpAddress);

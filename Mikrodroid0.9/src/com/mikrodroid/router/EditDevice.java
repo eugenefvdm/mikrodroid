@@ -14,12 +14,12 @@ import android.widget.Toast;
 
 public class EditDevice extends Activity {
 
-	private EditText mNameText;
-	private EditText mIpAddressText;    
+	private EditText mName;
+	private EditText mIpAddress;    
     private String mStatus;
     private String mType;
-    private EditText mUsernameText;
-    private EditText mPasswordText;
+    private EditText mUsername;
+    private EditText mPassword;
     private RadioButton mMikrotikRadio;
     private RadioButton mOtherRadio;
     
@@ -34,18 +34,16 @@ public class EditDevice extends Activity {
         mDbHelper = new DevicesDbAdapter(this);
         mDbHelper.open();
         
-        setContentView(R.layout.device_edit);
+        setContentView(R.layout.edit_device);
         
         setTitle(R.string.window_edit_device);
 
-        mIpAddressText = (EditText) findViewById(R.id.text_ip_address);
-        mNameText = (EditText) findViewById(R.id.text_name);
-        mUsernameText = (EditText) findViewById(R.id.text_username);
-        mPasswordText = (EditText) findViewById(R.id.text_password);
-        
+        mIpAddress = (EditText) findViewById(R.id.text_ip_address);
+        mName = (EditText) findViewById(R.id.text_name);
+        mUsername = (EditText) findViewById(R.id.text_username);
+        mPassword = (EditText) findViewById(R.id.text_password);
         
         // TODO Add code to get radio state so that mType can be set
-
         Button confirmButton = (Button) findViewById(R.id.button_confirm);
              
         mRowId = (savedInstanceState == null) ? null :
@@ -74,6 +72,7 @@ public class EditDevice extends Activity {
         mOtherRadio = (RadioButton) findViewById(R.id.radio_other);
         mMikrotikRadio.setOnClickListener(radio_listener);
         mOtherRadio.setOnClickListener(radio_listener);
+        // Code to set the right button
         
     }
     
@@ -88,16 +87,16 @@ public class EditDevice extends Activity {
         if (mRowId != null) {
             Cursor device = mDbHelper.fetchDevice(mRowId);
             startManagingCursor(device);
-            mIpAddressText.setText(device.getString(
+            mIpAddress.setText(device.getString(
                         device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS)));
-            mNameText.setText(device.getString(
+            mName.setText(device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_NAME))); 
             mStatus = device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));
             String type = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_TYPE));            
-            mUsernameText.setText(device.getString(
+            mUsername.setText(device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USERNAME)));
-            mPasswordText.setText(device.getString(
+            mPassword.setText(device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_PASSWORD)));
             if (type != null && type.contains("MikroTik")) {
             	mType = "MikroTik";
@@ -132,10 +131,10 @@ public class EditDevice extends Activity {
     }
     
     private void saveState() {
-    	String name = mNameText.getText().toString();
-    	String ipAddress = mIpAddressText.getText().toString();
-    	String username = mUsernameText.getText().toString();
-    	String password = mPasswordText.getText().toString();
+    	String name = mName.getText().toString();
+    	String ipAddress = mIpAddress.getText().toString();
+    	String username = mUsername.getText().toString();
+    	String password = mPassword.getText().toString();
                 
         if (!(name.equals("") && ipAddress.equals(""))) {
         

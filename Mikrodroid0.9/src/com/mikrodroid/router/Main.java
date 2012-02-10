@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import com.mikrodroid.router.api.*;
 import com.mikrodroid.router.db.DevicesDbAdapter;
+import com.mikrodroid.router.ui.NavigationChildren;
 import com.mikrodroid.router.ui.NavigationRoot;
 
 import android.app.ListActivity;
@@ -86,6 +87,10 @@ public class Main extends ListActivity {
 	 */
 	private String mDeviceName;
 	
+	private String mCommandFileName;
+	
+	private boolean mMenuBootFileExists;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -94,14 +99,25 @@ public class Main extends ListActivity {
 		mDbHelper.open();
 		setContentView(R.layout.main);
 		fillData();				
-		registerForContextMenu(getListView());	
-		// Assign MikroTik menu system to global navigation variables upon initialisation of app
-		MikrotikCommandSet commands = new MikrotikCommandSet();
-		commands.importCommands("commands.rsc");
-		Main.menuList = commands.getMenus();
-		// TODO Fix Type safety: Unchecked invocation sort(MenuList, NameComparator) of the generic method sort(List<T>, Comparator<? super T>) of type Collections
-		Collections.sort(menuList, new NameComparator());
-		rootMenuList = Main.menuList.getRootMenus();
+		registerForContextMenu(getListView());
+		
+		mCommandFileName = "commands.rsc";
+		mMenuBootFileExists = false;
+		
+		if (MikrotikApi.checkBootMenuExists(mCommandFileName) == true) {
+			Log.d(TAG, "MikroTik boot menu exists");
+			mMenuBootFileExists = true;			
+			// Assign MikroTik menu system to global navigation variables upon initialisation of app
+			MikrotikCommandSet commands = new MikrotikCommandSet();
+			commands.importCommands("commands.rsc");
+			Main.menuList = commands.getMenus();
+			// TODO Fix Type safety: Unchecked invocation sort(MenuList, NameComparator) of the generic method sort(List<T>, Comparator<? super T>) of type Collections
+			Collections.sort(menuList, new NameComparator());
+			rootMenuList = Main.menuList.getRootMenus();
+		} else {
+			Log.w(TAG, "MikroTik boot menu does not exist");			
+		}
+		
 	}
 	
 	private void fillData() {
@@ -112,16 +128,12 @@ public class Main extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		
+		super.onListItemClick(l, v, position, id);		
 		Log.v(TAG, "Connecting to device id " + id);				
-
 		Cursor device = mDbHelper.fetchDevice(id);
         startManagingCursor(device);
-        String ipAddress = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS));
-        
-        new PingAsync(ipAddress, id).execute();		
-		
+        String ipAddress = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS));        
+        new PingAsync(ipAddress, id).execute();				
 	}
 	
 	@Override
@@ -141,7 +153,12 @@ public class Main extends ListActivity {
 			startActivityForResult(i1, ACTIVITY_EDIT_DEVICE);
 			return true;	
 		case MENU_BOOTSTRAP_MIKROTIK_MENU:
-			MikrotikApi.getExportFile("commands.rsc");                
+			if (MikrotikApi.getExportFile(mCommandFileName) == true) {
+				Toast.makeText(this, "Successfully retrieved menus", Toast.LENGTH_LONG).show();
+				mMenuBootFileExists = true;
+			} else {
+				Toast.makeText(this, "Failed to retrieve menus", Toast.LENGTH_LONG).show();
+			}
             return true;
 		case MENU_SETTINGS:
 			Intent i2 = new Intent(Main.this, Settings.class);
@@ -165,8 +182,15 @@ public class Main extends ListActivity {
 		Long id = info.id;
 		switch (item.getItemId()) {	
 		case CTX_MENU_LOGIN:
-			loginToDevice(id);
-			return true;
+			if (mMenuBootFileExists == true) {
+				loginToDevice(id);
+				return true;	
+			} else {
+				Log.d(TAG, "MikroTik boot menu file does not exist");
+				Toast.makeText(this, getString(R.string.error_boot_menu_first), Toast.LENGTH_LONG).show();
+				return true;
+			}
+			
 		case CTX_MENU_EDIT:
 			Intent i1 = new Intent(this, EditDevice.class);
 			i1.putExtra(DevicesDbAdapter.KEY_DEVICES_DEVICE_ID, id);
@@ -200,8 +224,9 @@ public class Main extends ListActivity {
         		// Upon successful login add the router name and status to the database
     			setupMikrotikRouter(id, ipAddress, mDeviceName, status);    			
     			// Start navigation intent
-    			Log.d(TAG, "Starting NavigrationRoot.class");    			
-    			Intent i = new Intent(this, NavigationRoot.class);
+    			Log.d(TAG, "Starting NavigrationRoot");    			
+    			Intent i = new Intent(this, NavigationRoot.class); // TODO Migrate NavigrationRoot to single file Navigation based on Children
+    			// Intent i = new Intent(this, NavigationChildren.class);
     			i.putExtra("id", id);
     			i.putExtra("ipAddress", ipAddress);			
     			i.putExtra("name", mDeviceName);
@@ -229,7 +254,7 @@ public class Main extends ListActivity {
 		boolean result = false;				
 		String loginResult = null;
 		Log.d(TAG, "Creating a new API connection");
-		// TODO Migrate 8728 to settings
+		// TODO Assign API constant 8728 to value contained in app settings
 		apiConn = new MikrotikApi(ipAddress, 8728);				
 		if (!apiConn.isConnected()) {
 			Log.d(TAG, "API isConnected() is now " + apiConn.isConnected());
@@ -237,7 +262,7 @@ public class Main extends ListActivity {
 			try {
 				apiConn.join();
 				if (apiConn.isConnected()) {
-					Log.d(TAG, "Calling the login method of apiConn");
+					Log.v(TAG, "Calling the login method of apiConn");
 					loginResult = apiConn.login(username, password);
 					
 					if (loginResult == "Login successful") {						

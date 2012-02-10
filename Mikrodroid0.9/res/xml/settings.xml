@@ -35,4 +35,32 @@
 				 
     </PreferenceCategory>
     
+	<PreferenceCategory
+            android:title="@string/pref_cat_bootstrap">
+
+        <EditTextPreference
+                android:key="pref_bootstrap_ip"
+                android:title="@string/pref_title_bootstrap_ip"
+                android:summary="@string/pref_summary_bootstrap_ip"
+                android:dialogTitle="@string/pref_title_bootstrap_ip"
+		/>
+		
+		 <EditTextPreference
+                android:key="pref_bootstrap_username"
+                android:title="@string/pref_title_bootstrap_username"
+                android:summary="@string/pref_summary_bootstrap_username"
+                android:dialogTitle="@string/pref_dialog_bootstrap_username"
+                android:password="true"                
+		/>
+		 
+		  <EditTextPreference
+                android:key="pref_bootstrap_password"
+                android:title="@string/pref_title_bootstrap_password"
+                android:summary="@string/pref_summary_bootstrap_password"
+                android:dialogTitle="@string/pref_dialog_bootstrap_password"
+                android:password="true"                
+		/>
+		 
+    </PreferenceCategory>
+	    
 </PreferenceScreen>

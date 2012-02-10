@@ -319,17 +319,18 @@ public class MikrotikApi extends Thread {
 	 * 
 	 * @param remoteFile
 	 */
-	public static void getExportFile(String remoteFile) {
-
-		FTPClient conn = new FTPClient();
+	public static boolean getExportFile(String remoteFile) {					
+		
 		File f = new File("/mnt/sdcard/"	+ remoteFile);
-		if (f.exists() == false) { // If the file is not there create it
+		
+		if (checkBootMenuExists(remoteFile) == false) { // If the file is not there create it			
 			try {				
 				f.createNewFile();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
+		
 		// TODO Better debugging for file not found etc.
 		FileOutputStream localFile = null;
 		try {
@@ -337,20 +338,35 @@ public class MikrotikApi extends Thread {
 		} catch (FileNotFoundException e2) {
 			e2.printStackTrace();
 		}
-
+		
+		Log.d(TAG, "FTPing to router to get menu system");
+		FTPClient conn = new FTPClient();
+		
 		try {
 			conn.connect("192.168.0.2");
-			if (conn.login("admin", "commandsdownload")) {
+			if (conn.login("eugene", "moresecure69")) {
+				Log.d(TAG, "Retrieving file from FTP...");
 				conn.enterLocalPassiveMode(); // Android needs this line
 				conn.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 				conn.retrieveFile(remoteFile, localFile);
 				conn.logout();
 				conn.disconnect();
+				return true;
+			} else {
+				Log.e(TAG, "Unable to FTP to router");		
+				// Delete the file
+				f.delete();
 			}
 		} catch (Exception e3) {
 			e3.printStackTrace();
 		}
+		return false;
 
+	}
+	
+	public static boolean checkBootMenuExists(String remoteFile) {			
+		File f = new File("/mnt/sdcard/"	+ remoteFile);		
+		return (f.exists());		
 	}
 	
 	/**
@@ -368,7 +384,6 @@ public class MikrotikApi extends Thread {
 			if (conn.login("eugene", "moresecure69")) {
 				conn.enterLocalPassiveMode();
 				conn.setFileTransferMode(FTP.BINARY_FILE_TYPE);				
-				// String filename = "/mnt/sdcard/Mikrodroid/" + fileName;
 				String filename = "/mnt/sdcard/" + fileName;
 				fis = new FileInputStream(filename);
 				conn.storeFile(fileName + ".upload", fis);
