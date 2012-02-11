@@ -15,7 +15,7 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 
 /**
- * Display preferences neatly underneath the input boxes.
+ * Display preferences underneath the input boxes, this is non-default behaviour.
  * 
  * By default in Android you have to first click, this actually shows you the value underneath. Neat.
  *  
@@ -24,11 +24,16 @@ import android.preference.PreferenceActivity;
  */
 public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
-	public static final String SETTING_GLOBAL_USERNAME = "pref_global_username";	
-	public static final String SETTING_API_PORT = "pref_api_port";
+	// A spelling mistake in this section will cost you an exception
+	public static final String SETTING_GLOBAL_USERNAME = "setting_global_username";	
+	public static final String SETTING_API_PORT = "setting_api_port";
+	public static final String SETTING_BOOTSTRAP_IP = "setting_bootstrap_ip";
+	public static final String SETTING_BOOTSTRAP_USERNAME = "setting_bootstrap_username";
 	 
     private EditTextPreference mSettingGlobalUsername;
     private EditTextPreference mSettingApiPort;
+    private EditTextPreference mSettingBootstrapIp;
+    private EditTextPreference mSettingBootstrapUsername;
     
 	public static final String PREFS_NAME = "MikrodroidPrefsFile";
 	
@@ -39,6 +44,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	    addPreferencesFromResource(R.xml.settings);
 	    mSettingGlobalUsername = (EditTextPreference)getPreferenceScreen().findPreference(SETTING_GLOBAL_USERNAME);
 	    mSettingApiPort = (EditTextPreference)getPreferenceScreen().findPreference(SETTING_API_PORT);
+	    mSettingBootstrapIp = (EditTextPreference)getPreferenceScreen().findPreference(SETTING_BOOTSTRAP_IP);
+	    mSettingBootstrapUsername = (EditTextPreference)getPreferenceScreen().findPreference(SETTING_BOOTSTRAP_USERNAME);
 	}
 	
 	@Override
@@ -47,6 +54,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		// Setup the initial values
 		mSettingGlobalUsername.setSummary(mSettingGlobalUsername.getText());
 		mSettingApiPort.setSummary(mSettingApiPort.getText());
+		mSettingBootstrapIp.setSummary(mSettingBootstrapIp.getText());
+		mSettingBootstrapUsername.setSummary(mSettingBootstrapUsername.getText());
 		// Set up a listener whenever a key changes            
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
@@ -66,7 +75,12 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
         if (key.equals(SETTING_API_PORT)) {
         	mSettingApiPort.setSummary(sharedPreferences.getString(key, "")); 
         }
-        
+        if (key.equals(SETTING_BOOTSTRAP_IP)) {
+        	mSettingBootstrapIp.setSummary(sharedPreferences.getString(key, "")); 
+        }
+        if (key.equals(SETTING_BOOTSTRAP_USERNAME)) {
+        	mSettingBootstrapUsername.setSummary(sharedPreferences.getString(key, "")); 
+        }
     }
 	
 }

@@ -108,7 +108,7 @@ public class Main extends ListActivity {
 			Log.d(TAG, "MikroTik boot menu exists");
 			mMenuBootFileExists = true;			
 			// Assign MikroTik menu system to global navigation variables upon initialisation of app
-			MikrotikCommandSet commands = new MikrotikCommandSet();
+			MikrotikCommandLoad commands = new MikrotikCommandLoad();
 			commands.importCommands("commands.rsc");
 			Main.menuList = commands.getMenus();
 			// TODO Fix Type safety: Unchecked invocation sort(MenuList, NameComparator) of the generic method sort(List<T>, Comparator<? super T>) of type Collections
@@ -205,24 +205,46 @@ public class Main extends ListActivity {
 	}
 	
 	private void loginToDevice(long id) {
-		Log.v(TAG, "Connecting to device with id " + id);				
+		Log.d(TAG, "loginToDevice with id #" + id);
+		
+		String ipAddress;
+		String status;
+		String deviceType;
+		int useGlobalLogin;
+		String username;
+		String password;		
+				
+		int apiPort;
+		
+        // Initialise the preference manager
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Cursor device = mDbHelper.fetchDevice(id);
         startManagingCursor(device);
-        String ipAddress = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS));
+        
         mDeviceName = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_NAME));
-        String status = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));
-		// Assign device type which will be used to determine if we can log in or not
-        String deviceType = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_TYPE));
-        // Get global username and password
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = prefs.getString("pref_global_username", "");
-        String password = prefs.getString("pref_global_password", "");
+        ipAddress = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS));        
+        status = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));
+		
+        // Assign device type. This will determine if we can log in or now
+        deviceType = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_TYPE));
+        // Get the API port and parse it as an integer
+        apiPort = Integer.parseInt(prefs.getString("setting_api_port", "8728"));
+        
+        useGlobalLogin = device.getInt(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USE_GLOBAL_LOGIN));
+        
+        if (useGlobalLogin == 1) {        
+        	username = prefs.getString("pref_global_username", "");
+        	password = prefs.getString("pref_global_password", "");        
+        } else {
+        	username = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USERNAME));
+        	password = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_PASSWORD));
+        }
                 
         if (deviceType.contains("MikroTik")) {
-        	if (loginMtRouter(ipAddress, username, password)) {
+        	if (loginMtRouter(ipAddress, username, password, apiPort)) {
         		// Upon successful login add the router name and status to the database
-    			setupMikrotikRouter(id, ipAddress, mDeviceName, status);    			
+    			setupMikrotikRouter(id, mDeviceName, ipAddress, status);    			
     			// Start navigation intent
     			Log.d(TAG, "Starting NavigrationRoot");    			
     			Intent i = new Intent(this, NavigationRoot.class); // TODO Migrate NavigrationRoot to single file Navigation based on Children
@@ -236,26 +258,35 @@ public class Main extends ListActivity {
     			fillData();
     		}
         } else {
-        	Toast.makeText(this, R.string.invalid_login_type, Toast.LENGTH_SHORT).show();        	
-        	// Don't do anything, we're trying to access a non-MikroTik device
+        	// Trying to login to a non-MikroTik device
+        	Toast.makeText(this, R.string.error_invalid_login_type, Toast.LENGTH_SHORT).show();        	
         }
 	}
 	
 	/**
 	 * Log into a MikroTik router with a username and password
 	 * 
+	 * TODO Consider not use result variable and just plain fall through
+	 * 
 	 * @param ipAddress
 	 * @param username
 	 * @param password
 	 * @return
 	 */
-	private boolean loginMtRouter(String ipAddress, String username, String password) {
+	private boolean loginMtRouter(String ipAddress, String username, String password, int apiPort) {
 		Log.v(TAG, "In loginMtRouter method of " + TAG);
-		boolean result = false;				
+		boolean result = false;
+		
+		Log.v(TAG, "Checking for blank username");
+		if (username.length() ==0) {
+			Toast.makeText(this, R.string.error_blank_username, Toast.LENGTH_SHORT).show();
+			return result;
+		}
+		
 		String loginResult = null;
 		Log.d(TAG, "Creating a new API connection");
 		// TODO Assign API constant 8728 to value contained in app settings
-		apiConn = new MikrotikApi(ipAddress, 8728);				
+		apiConn = new MikrotikApi(ipAddress, apiPort);				
 		if (!apiConn.isConnected()) {
 			Log.d(TAG, "API isConnected() is now " + apiConn.isConnected());
 			apiConn.start();
@@ -271,13 +302,17 @@ public class Main extends ListActivity {
 						Log.i(TAG, loginResult);
 					} else  {						
 						Log.e(TAG, "Username: " + username + ": " + loginResult);
-						Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show();
+						Toast.makeText(this, R.string.error_login_failed, Toast.LENGTH_SHORT).show();	
 						result = false;
-					}					
-					
+					}										
 				} else {
+					// Possible reasons for being here:
+					//  API port no enabled  
+					//  API port not correct
+					// TODO: Improve error checking to display possible API not enabled / API port issues. Use string comparison for that
+					// test by way switching on and off API port
 					result = false;
-					Log.i(TAG, "Login error " + ipAddress + ": " + apiConn.getMessage());
+					Log.e(TAG, "Login error " + ipAddress + ": " + apiConn.getMessage());
 					Toast.makeText(this, "Login error " + ipAddress + "\n" + apiConn.getMessage(), Toast.LENGTH_LONG).show();
 				}
 			} catch (InterruptedException e) {
@@ -296,11 +331,11 @@ public class Main extends ListActivity {
 	 * @param deviceName
 	 * @param status
 	 */
-	private void setupMikrotikRouter(long id, String ipAddress, String deviceName, String status) {
+	private void setupMikrotikRouter(long id, String deviceName, String ipAddress, String status) {
 		boolean statusChanged = false;
 		boolean nameChanged = false;		
 		if (deviceName == null || deviceName.length() == 0) {
-			Log.v(TAG, "Router name not in database, setting");
+			Log.w(TAG, "Router name not in database, setting");
 			deviceName = apiConn.setRouterName();	
 			mDeviceName = deviceName;
 			nameChanged = true;
@@ -310,7 +345,7 @@ public class Main extends ListActivity {
 			statusChanged = true;
 		}
 		if (nameChanged || statusChanged) {
-			mDbHelper.updateDevice(id, ipAddress, deviceName, status);
+			mDbHelper.updateDevice(id, deviceName, ipAddress, status);
 		}		
 	}
 	

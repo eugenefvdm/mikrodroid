@@ -5,23 +5,30 @@ import com.mikrodroid.router.db.DevicesDbAdapter;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
 public class EditDevice extends Activity {
+	
+	private static final String TAG = "EditDevice";
 
 	private EditText mName;
-	private EditText mIpAddress;    
-    private String mStatus;
-    private String mType;
+	private EditText mIpAddress; 
+        
     private EditText mUsername;
     private EditText mPassword;
     private RadioButton mMikrotikRadio;
     private RadioButton mOtherRadio;
+    private CheckBox mUseGlobalLogin;
+    
+    private String mStatus;
+    private String mType;
     
     private DevicesDbAdapter mDbHelper;    
     
@@ -31,18 +38,18 @@ public class EditDevice extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        setContentView(R.layout.edit_device);        
+        setTitle(R.string.window_edit_device);
+        
         mDbHelper = new DevicesDbAdapter(this);
         mDbHelper.open();
         
-        setContentView(R.layout.edit_device);
-        
-        setTitle(R.string.window_edit_device);
-
-        mIpAddress = (EditText) findViewById(R.id.text_ip_address);
         mName = (EditText) findViewById(R.id.text_name);
+        mIpAddress = (EditText) findViewById(R.id.text_ip_address);        
+        mUseGlobalLogin = (CheckBox) findViewById(R.id.checkbox_use_global_login);
         mUsername = (EditText) findViewById(R.id.text_username);
         mPassword = (EditText) findViewById(R.id.text_password);
-        
+              
         // TODO Add code to get radio state so that mType can be set
         Button confirmButton = (Button) findViewById(R.id.button_confirm);
              
@@ -54,7 +61,7 @@ public class EditDevice extends Activity {
                                     : null;
         }
         
-        populateFields();
+        // Seems that in onResume populateFields() is called anyway
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View view) {
@@ -84,16 +91,28 @@ public class EditDevice extends Activity {
     };    
     
     private void populateFields() {
+    	
+    	int useGlobalLogin = 0;
+    	
         if (mRowId != null) {
             Cursor device = mDbHelper.fetchDevice(mRowId);
             startManagingCursor(device);
-            mIpAddress.setText(device.getString(
-                        device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS)));
             mName.setText(device.getString(
-                    device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_NAME))); 
+                    device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_NAME)));
+            mIpAddress.setText(device.getString(
+                        device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS)));             
             mStatus = device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));
             String type = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_TYPE));            
+            //
+            useGlobalLogin = device.getInt(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USE_GLOBAL_LOGIN));            
+            if (useGlobalLogin == 1) {
+            	mUseGlobalLogin.setChecked(true);
+            } else {
+            	mUseGlobalLogin.setChecked(false);
+            }            
+            Log.v(TAG, "useGlobalLogin value:" + useGlobalLogin);
+            //
             mUsername.setText(device.getString(
                     device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USERNAME)));
             mPassword.setText(device.getString(
@@ -107,7 +126,9 @@ public class EditDevice extends Activity {
             	mType = "Other";
             	mOtherRadio = (RadioButton) findViewById(R.id.radio_other);
             	mOtherRadio.toggle();            	
-            }             
+            }
+            
+            
         }
     }
     
@@ -134,19 +155,19 @@ public class EditDevice extends Activity {
     	String name = mName.getText().toString();
     	String ipAddress = mIpAddress.getText().toString();
     	String username = mUsername.getText().toString();
-    	String password = mPassword.getText().toString();
-                
-        if (!(name.equals("") && ipAddress.equals(""))) {
-        
+    	String password = mPassword.getText().toString();    	
+    	boolean boolUseGlobalLogin = mUseGlobalLogin.isChecked();    	
+    	int intUseGlobalLogin = (boolUseGlobalLogin == true)? 1:0;
+    	                
+        if (!(name.equals("") && ipAddress.equals(""))) {        
 	        // If new product
-	        if (mRowId == null) {  
-	        			    		    	
-	            long id = mDbHelper.addDevice(ipAddress, name, mType, username, password);
+	        if (mRowId == null) {  	        			    		    	
+	            long id = mDbHelper.addDevice(name, ipAddress, mType, intUseGlobalLogin, username, password);
 	            if (id > 0) {
 	                mRowId = id;
 	            }
 	        } else {
-	            mDbHelper.updateDevice(mRowId, ipAddress, name, mType, username, password, mStatus);
+	            mDbHelper.updateDevice(mRowId, name, ipAddress, mType, intUseGlobalLogin, username, password, mStatus);
 	        }
         }
     }

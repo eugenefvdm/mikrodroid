@@ -4,60 +4,59 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<PreferenceCategory
-            android:title="@string/pref_cat_general">
+            android:title="@string/setting_general_category">
 
         <EditTextPreference
-                android:key="pref_global_username"
-                android:title="@string/pref_title_global_username"
-                android:summary="@string/pref_summary_global_username"
-                android:dialogTitle="@string/pref_dialog_global_username"
+                android:key="setting_global_username"
+                android:title="@string/setting_global_username_title"
+                android:summary="@string/setting_global_username_summary"
+                android:dialogTitle="@string/setting_global_username_dialog"
 		/>
 		
 		 <EditTextPreference
-                android:key="pref_global_password"
-                android:title="@string/pref_title_global_password"
-                android:summary="@string/pref_summary_global_password"
-                android:dialogTitle="@string/pref_dialog_global_password"
+                android:key="setting_global_password"
+                android:title="@string/setting_global_password_title"
+                android:summary="@string/setting_global_password_summary"
+                android:dialogTitle="@string/setting_global_password_dialog"
                 android:password="true"                
 		/>
                 
     </PreferenceCategory>
     
 	<PreferenceCategory
-            android:title="@string/pref_cat_system">
+            android:title="@string/setting_system_category">
 
         <EditTextPreference
-                android:key="pref_api_port"
-                android:title="@string/pref_title_api_port"
-                android:summary="@string/pref_summary_api_port"
-                android:dialogTitle="@string/pref_dialog_api_port"
+                android:key="setting_api_port"
+                android:title="@string/setting_api_port_title"
+                android:summary="@string/setting_api_port_summary"
+                android:dialogTitle="@string/setting_api_port_dialog"
 		/>
 				 
     </PreferenceCategory>
     
 	<PreferenceCategory
-            android:title="@string/pref_cat_bootstrap">
+            android:title="@string/setting_bootstrap_category">
 
         <EditTextPreference
-                android:key="pref_bootstrap_ip"
-                android:title="@string/pref_title_bootstrap_ip"
-                android:summary="@string/pref_summary_bootstrap_ip"
-                android:dialogTitle="@string/pref_title_bootstrap_ip"
+                android:key="setting_bootstrap_ip"
+                android:title="@string/setting_bootstrap_ip_title"
+                android:summary="@string/setting_api_port_summary"
+                android:dialogTitle="@string/setting_bootstrap_ip_dialog"
 		/>
 		
 		 <EditTextPreference
-                android:key="pref_bootstrap_username"
-                android:title="@string/pref_title_bootstrap_username"
-                android:summary="@string/pref_summary_bootstrap_username"
-                android:dialogTitle="@string/pref_dialog_bootstrap_username"
-                android:password="true"                
+                android:key="setting_bootstrap_username"
+                android:title="@string/setting_bootstrap_username_title"
+                android:summary="@string/setting_bootstrap_username_summary"
+                android:dialogTitle="@string/setting_bootstrap_username_dialog"
 		/>
 		 
 		  <EditTextPreference
-                android:key="pref_bootstrap_password"
-                android:title="@string/pref_title_bootstrap_password"
-                android:summary="@string/pref_summary_bootstrap_password"
-                android:dialogTitle="@string/pref_dialog_bootstrap_password"
+                android:key="setting_bootstrap_password"
+                android:title="@string/setting_bootstrap_password_title"
+                android:summary="@string/setting_bootstrap_password_summary"
+                android:dialogTitle="@string/setting_bootstrap_password_dialog"
                 android:password="true"                
 		/>
 		 

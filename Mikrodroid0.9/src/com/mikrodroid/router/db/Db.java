@@ -17,7 +17,7 @@ public class Db {
 	private static final String TAG = "Db";	
     
     private static final String DATABASE_NAME = "devices";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
     
     protected static final String TABLE_DEVICES = "devices";
     
@@ -26,22 +26,24 @@ public class Db {
     public static final String KEY_DEVICES_IP_ADDRESS = "ip_address";
     public static final String KEY_DEVICES_IP_PORT = "ip_port";    
     public static final String KEY_DEVICES_TYPE = "type";
+    public static final String KEY_DEVICES_USE_GLOBAL_LOGIN = "use_global_login";
     public static final String KEY_DEVICES_USERNAME = "username";
     public static final String KEY_DEVICES_PASSWORD = "password";
     public static final String KEY_DEVICES_STATUS = "status";
-    public static final String KEY_DEVICES_PING_RESPONSE = "ping_response";
-        
+    public static final String KEY_DEVICES_PING_RESPONSE = "ping_response";    
+
+    // When you add a new database column below you have to up the DATABASE_VERSION to a new number so that the new schema is created
     private static final String CREATE_TABLE_DEVICES =
         "CREATE TABLE " + TABLE_DEVICES + " (" 
         + KEY_DEVICES_DEVICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
         + KEY_DEVICES_NAME + " TEXT, "
         + KEY_DEVICES_IP_ADDRESS + " TEXT NOT NULL, "                
         + KEY_DEVICES_TYPE + " TEXT, "
+        + KEY_DEVICES_USE_GLOBAL_LOGIN + " INTEGER, "
         + KEY_DEVICES_USERNAME + " TEXT, "
         + KEY_DEVICES_PASSWORD + " TEXT, "
         + KEY_DEVICES_STATUS + " TEXT, "
         + KEY_DEVICES_PING_RESPONSE + " TEXT);";    
-    
     /**
      * Database super class from which all database inherit
      * @param ctx

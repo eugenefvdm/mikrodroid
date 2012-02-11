@@ -25,9 +25,9 @@ import android.util.Log;
  * Additional commands is added manually at the end of the import.
  * 
  */
-public class MikrotikCommandSet {
+public class MikrotikCommandLoad {
 
-	private static final String TAG = "MikrotikCommandSet";
+	private static final String TAG = "MikrotikCommandLoad";
 	
 	/**
 	 * Total number of menus that starts with a "/"
@@ -39,7 +39,7 @@ public class MikrotikCommandSet {
 	 */
 	private MenuList menuList;
 
-	public MikrotikCommandSet() {
+	public MikrotikCommandLoad() {
 		menuList = Main.menuList;
 	}
 	
@@ -130,6 +130,10 @@ public class MikrotikCommandSet {
 			   MenuObject store = new MenuObject();
 			   store = this.findMenu("/store");
 			   store.setMultiLine(true);
+			   
+			   MenuObject system_note = new MenuObject();
+			   system_note = this.findMenu("/system note");
+			   system_note.setMultiLine(false);
 			   
 			   
 			   

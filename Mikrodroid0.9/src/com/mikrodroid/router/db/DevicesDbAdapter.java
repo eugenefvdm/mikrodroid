@@ -36,14 +36,50 @@ public class DevicesDbAdapter extends Db {
         mDbHelper.close();
     }
 
-    public long addDevice(String name, String ipAddress, String type, String username, String password) {
+    public long addDevice(String name, String ipAddress, String type, int useGlobalLogin, String username, String password) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(Db.KEY_DEVICES_NAME, name);
         initialValues.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);        
         initialValues.put(Db.KEY_DEVICES_TYPE, type);
+        initialValues.put(Db.KEY_DEVICES_USE_GLOBAL_LOGIN, useGlobalLogin);
         initialValues.put(Db.KEY_DEVICES_USERNAME, username);
         initialValues.put(Db.KEY_DEVICES_PASSWORD, password);
         return mDb.insert(Db.TABLE_DEVICES, null, initialValues);
+    }
+    
+    /**
+     * Update device table with new device information
+     * 
+     * Optional method below updates with only limited information needs to be updated, e.g. a status update
+     * 
+     */
+    public boolean updateDevice(long id, String name, String ipAddress, String type, int useGlobalLogin, String username, String password, String status) {
+        ContentValues args = new ContentValues();
+        args.put(Db.KEY_DEVICES_NAME, name);
+        args.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);                        
+        args.put(Db.KEY_DEVICES_TYPE, type);
+        args.put(Db.KEY_DEVICES_USE_GLOBAL_LOGIN, useGlobalLogin);
+        args.put(Db.KEY_DEVICES_USERNAME, username);
+        args.put(Db.KEY_DEVICES_PASSWORD, password);
+        args.put(Db.KEY_DEVICES_STATUS, status);
+        return mDb.update(Db.TABLE_DEVICES, args, Db.KEY_DEVICES_DEVICE_ID + "=" + id, null) > 0;
+    }
+    
+    /**
+     * Update device with minimal arguments when changing name or status
+     * 
+     * @param id
+     * @param ipAddress
+     * @param name
+     * @param status
+     * @return
+     */
+    public boolean updateDevice(long id, String name, String ipAddress, String status) {
+        ContentValues args = new ContentValues();
+        args.put(Db.KEY_DEVICES_NAME, name);
+        args.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);                
+        args.put(Db.KEY_DEVICES_STATUS, status);        
+        return mDb.update(Db.TABLE_DEVICES, args, Db.KEY_DEVICES_DEVICE_ID + "=" + id, null) > 0;
     }
    
     public boolean deleteDevice(long rowId) {
@@ -81,6 +117,7 @@ public class DevicesDbAdapter extends Db {
         	Db.KEY_DEVICES_IP_ADDRESS,            
             Db.KEY_DEVICES_STATUS,
             Db.KEY_DEVICES_TYPE,
+            Db.KEY_DEVICES_USE_GLOBAL_LOGIN,
             Db.KEY_DEVICES_USERNAME,
             Db.KEY_DEVICES_PASSWORD
         }, Db.KEY_DEVICES_DEVICE_ID + "=" + rowId, null, null, null, null, null);
@@ -88,47 +125,6 @@ public class DevicesDbAdapter extends Db {
             mCursor.moveToFirst();
         }
         return mCursor;
-    }
-   
-    /**
-     * Update device table with new device information
-     * 
-     * Optional method below updates with only limited information needs to be updated, e.g. a status update
-     * @param id
-     * @param ipAddress
-     * @param name
-     * @param type
-     * @param username
-     * @param password
-     * @param status
-     * @return
-     */
-    public boolean updateDevice(long id, String ipAddress, String name, String type, String username, String password, String status) {
-        ContentValues args = new ContentValues();
-        args.put(Db.KEY_DEVICES_NAME, name);
-        args.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);                        
-        args.put(Db.KEY_DEVICES_TYPE, type);
-        args.put(Db.KEY_DEVICES_USERNAME, username);
-        args.put(Db.KEY_DEVICES_PASSWORD, password);
-        args.put(Db.KEY_DEVICES_STATUS, status);
-        return mDb.update(Db.TABLE_DEVICES, args, Db.KEY_DEVICES_DEVICE_ID + "=" + id, null) > 0;
-    }
-    
-    /**
-     * Update device with minimal arguments when changing name or status
-     * 
-     * @param id
-     * @param ipAddress
-     * @param name
-     * @param status
-     * @return
-     */
-    public boolean updateDevice(long id, String name, String ipAddress, String status) {
-        ContentValues args = new ContentValues();
-        args.put(Db.KEY_DEVICES_NAME, name);
-        args.put(Db.KEY_DEVICES_IP_ADDRESS, ipAddress);                
-        args.put(Db.KEY_DEVICES_STATUS, status);        
-        return mDb.update(Db.TABLE_DEVICES, args, Db.KEY_DEVICES_DEVICE_ID + "=" + id, null) > 0;
     }
     
     public String getDeviceIpAddress(long id) {

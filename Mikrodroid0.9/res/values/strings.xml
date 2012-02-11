@@ -4,21 +4,20 @@
 	<string name="hello">Hello World!</string>
     <string name="app_name">Mikrodroid</string>
         
-    <string name="no_devices">Use menu to add devices</string>
+    <string name="status_no_devices">Use menu to add devices</string>
     
     <string name="menu_add_device">Add Device</string>
     <string name="menu_bootstrap_routeros">Boot RouterOS Menu</string>
     <string name="menu_settings">Settings</string>
     
-	<string name="text_ip_address">IP Address</string>
 	<string name="text_name">Name</string>
-	<string name="text_use_global_username">Global username/password</string>
+	<string name="text_ip_address">IP Address</string>
+	<string name="text_type">Type</string>
 	<string name="text_username">Username</string>
-	<string name="text_password">Password</string>	
+	<string name="text_password">Password</string>
+	<string name="text_use_global_login">Use Global Login</string>	
 	
 	<string name="button_confirm">Confirm</string>
-      
-	<string name="text_type">Type</string>
 	
 	<string name="window_edit_device">Edit Device</string>
 	
@@ -26,42 +25,41 @@
     <string name="menu_ctx_edit">Edit</string>
     <string name="menu_ctx_delete">Delete</string>
     
-    <string name="login_failed">Invalid username or password</string>
-    
-    <string name="invalid_login_type">Cannot login to this type of device</string>
-    
-    <string name="menu_filter">Filter</string>
-    
-    <string name="pref_cat_general">General</string>
-    
-    <string name="pref_title_global_username">Global Username</string>
-    <string name="pref_summary_global_username">Username Summary</string>    
-    <string name="pref_dialog_global_username">Enter Global Username</string>                
-    
-    <string name="pref_title_global_password">Global Password</string>
-    <string name="pref_summary_global_password">******************</string>    
-    <string name="pref_dialog_global_password">Enter Global Password</string>
-    
-    <string name="pref_cat_system">System</string>
-    
-    <string name="pref_title_api_port">MikroTik API Port</string>
-    <string name="pref_summary_api_port">MikroTik API Port Summary</string>    
-    <string name="pref_dialog_api_port">Enter MikroTik API Port</string>
-    
-    <string name="pref_cat_bootstrap">Bootstrap Router Information</string>
-    
-    <string name="pref_title_bootstrap_ip">IP Address</string>
-    <string name="pref_summary_bootstrap_ip">IP Address Summary</string>    
-    <string name="pref_dialog_bootstrap_ip">Enter IP Address</string>
-    
-    <string name="pref_title_bootstrap_username">Username</string>
-    <string name="pref_summary_bootstrap_username">Username Summary</string>    
-    <string name="pref_dialog_bootstrap_username">Enter Username</string>
-    
-    <string name="pref_title_bootstrap_password">Password</string>
-    <string name="pref_summary_bootstrap_password">Password Summary</string>    
-    <string name="pref_dialog_bootstrap_password">Enter Password</string>       
-    
+    <string name="error_login_failed">Invalid username or password</string>    
+    <string name="error_invalid_login_type">Cannot login to this type of device</string>    
     <string name="error_boot_menu_first">Bootstrap RouterOS Menu First</string>
+    <string name="error_blank_username">Username is blank. Check settings.</string>
+    
+    <string name="setting_general_category">General</string>
+    
+    <string name="setting_global_username_title">Global Username</string>
+    <string name="setting_global_username_summary">Username Summary</string>    
+    <string name="setting_global_username_dialog">Enter Username</string>                
+    
+    <string name="setting_global_password_title">Global Password</string>
+    <string name="setting_global_password_summary">******************</string>    
+    <string name="setting_global_password_dialog">Enter Password</string>
+    
+    <string name="setting_system_category">System</string>
+    
+    <string name="setting_api_port_title">MikroTik API Port</string>
+    <string name="setting_api_port_summary">MikroTik API Port Summary</string>    
+    <string name="setting_api_port_dialog">Enter MikroTik API Port</string>
+    
+    <string name="setting_bootstrap_category">RouterOS Boot Menu Information</string>
+    
+    <string name="setting_bootstrap_ip_title">IP Address</string>
+    <string name="setting_bootstrap_ip_summary">IP Address Summary</string>    
+    <string name="setting_bootstrap_ip_dialog">Enter IP Address</string>
+    
+    <string name="setting_bootstrap_username_title">Username</string>
+    <string name="setting_bootstrap_username_summary">Username Summary</string>    
+    <string name="setting_bootstrap_username_dialog">Enter Username</string>
+    
+    <string name="setting_bootstrap_password_title">Password</string>
+    <string name="setting_bootstrap_password_summary">******************</string>    
+    <string name="setting_bootstrap_password_dialog">Enter Password</string>       
+    
+	<string name="menu_filter">Filter</string>    
 
 </resources>
