@@ -180,7 +180,7 @@ public class MikrotikApi extends Thread {
 	 */
 	public String sendCommand(String s) {
 		s = s.toLowerCase();
-		Log.v(TAG, "RouterOS command: " + s);
+		Log.d(TAG, "RouterOS command: " + s);
 		return writeCommand.setCommand(s).runCommand();
 	}
 

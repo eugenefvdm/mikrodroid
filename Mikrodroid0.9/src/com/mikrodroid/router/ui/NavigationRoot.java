@@ -47,7 +47,7 @@ public class NavigationRoot extends ListActivity {
 		String name = b.getString("name");		
 		setTitle(mIpAddress + " (" + name + ")");
 				
-		MenuAdapter routerAdapter = new MenuAdapter(this, R.layout.device_row, Main.rootMenuList);				
+		MenuAdapter routerAdapter = new MenuAdapter(this, R.layout.device_row, Main.rootLevelNav);				
 		getListView().setAdapter(routerAdapter);
 		
 	}
@@ -56,14 +56,14 @@ public class NavigationRoot extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Main.currentMenu = Main.rootMenuList.get(position);
+		Main.currentMenu = Main.rootLevelNav.get(position);
 
 		// If this menu has no children then jump strait to output
 		if (Main.currentMenu.getChildren(Main.menuList).size() == 0) {
 			Log.d(TAG, "In constructor menu has no children");
 		}
 				
-		Intent i = new Intent(this, NavigationChildren.class);
+		Intent i = new Intent(this, Navigation.class);
 		i.putExtra("ipAddress", mIpAddress);
 		startActivity(i);		
 	}

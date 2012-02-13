@@ -12,8 +12,8 @@ import java.util.Collections;
 
 import com.mikrodroid.router.api.*;
 import com.mikrodroid.router.db.DevicesDbAdapter;
-import com.mikrodroid.router.ui.NavigationChildren;
-import com.mikrodroid.router.ui.NavigationRoot;
+import com.mikrodroid.router.ui.Navigation;
+//import com.mikrodroid.router.ui.NavigationRoot;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -70,7 +70,7 @@ public class Main extends ListActivity {
 	/**
 	 * TODO To be documented
 	 */
-	public static ArrayList<MenuObject> rootMenuList;
+	public static ArrayList<MenuObject> rootLevelNav;
 	
 	/**
 	 * TODO To be documented
@@ -113,7 +113,7 @@ public class Main extends ListActivity {
 			Main.menuList = commands.getMenus();
 			// TODO Fix Type safety: Unchecked invocation sort(MenuList, NameComparator) of the generic method sort(List<T>, Comparator<? super T>) of type Collections
 			Collections.sort(menuList, new NameComparator());
-			rootMenuList = Main.menuList.getRootMenus();
+			rootLevelNav = Main.menuList.getRootMenus();
 		} else {
 			Log.w(TAG, "MikroTik boot menu does not exist");			
 		}
@@ -247,11 +247,12 @@ public class Main extends ListActivity {
     			setupMikrotikRouter(id, mDeviceName, ipAddress, status);    			
     			// Start navigation intent
     			Log.d(TAG, "Starting NavigrationRoot");    			
-    			Intent i = new Intent(this, NavigationRoot.class); // TODO Migrate NavigrationRoot to single file Navigation based on Children
-    			// Intent i = new Intent(this, NavigationChildren.class);
+    			//Intent i = new Intent(this, NavigationRoot.class); // TODO Migrate NavigrationRoot to single file Navigation based on Children
+    			Intent i = new Intent(this, Navigation.class);
     			i.putExtra("id", id);
     			i.putExtra("ipAddress", ipAddress);			
     			i.putExtra("name", mDeviceName);
+    			i.putExtra("firstLaunch", true);
     			startActivity(i);
     		} else {    			
     			mDbHelper.updateDeviceStatus(id, "down");

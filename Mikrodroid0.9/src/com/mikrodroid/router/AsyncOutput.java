@@ -143,7 +143,7 @@ public class AsyncOutput extends ListActivity {
 				try {
 					currentResult = apiConn.getData();
 					if (currentResult != null) {
-						Log.d(TAG, currentResult);					
+						Log.v(TAG, currentResult);					
 						allResults = allResults + currentResult;						
 						if (currentResult.contains("!done")) {
 							return allResults;							
