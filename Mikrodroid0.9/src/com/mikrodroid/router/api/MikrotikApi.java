@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011 Snowball Effect
+ * Copyright (C) 2011-2012 Snowball Effect
  * 
  * Original source code:
  * http://wiki.mikrotik.com/wiki/API_in_Java
@@ -39,7 +39,8 @@ import android.util.Log;
 
 /**
  * MikrotikAPI extends a Thread
- * @author eugene
+ * 
+ * @author Eugene
  *
  */
 public class MikrotikApi extends Thread {
@@ -319,7 +320,7 @@ public class MikrotikApi extends Thread {
 	 * 
 	 * @param remoteFile
 	 */
-	public static boolean getExportFile(String remoteFile) {					
+	public static boolean getExportFile(String remoteFile, String ipAddress, String username, String password) {					
 		
 		File f = new File("/mnt/sdcard/"	+ remoteFile);
 		
@@ -343,8 +344,8 @@ public class MikrotikApi extends Thread {
 		FTPClient conn = new FTPClient();
 		
 		try {
-			conn.connect("192.168.0.2");
-			if (conn.login("eugene", "moresecure69")) {
+			conn.connect(ipAddress);
+			if (conn.login(username, password)) {
 				Log.d(TAG, "Retrieving file from FTP...");
 				conn.enterLocalPassiveMode(); // Android needs this line
 				conn.setFileTransferMode(FTP.BINARY_FILE_TYPE);
@@ -371,17 +372,17 @@ public class MikrotikApi extends Thread {
 	
 	/**
 	 * Get a locally store file called 'fileName' and upload it using FTP to the a MikroTik router
-	 * 
-	 *  TODO: Make routine more generic by making IP, username and password parameters
+	 *   
+	 * TODO: Figure out where this is used, if anywhere
 	 * 
 	 * @param fileName
 	 */
-	public static void upload(String fileName) {
+	public static void upload(String fileName, String ipAddress, String username, String password) {
 		FTPClient conn = new FTPClient();
 		FileInputStream fis = null;
 		try {
-			conn.connect("192.168.0.2");
-			if (conn.login("eugene", "moresecure69")) {
+			conn.connect(ipAddress);
+			if (conn.login(username, password)) {
 				conn.enterLocalPassiveMode();
 				conn.setFileTransferMode(FTP.BINARY_FILE_TYPE);				
 				String filename = "/mnt/sdcard/" + fileName;

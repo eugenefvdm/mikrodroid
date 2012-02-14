@@ -64,78 +64,10 @@ public class MikrotikCommandLoad {
 			   // Output how many were read
 			   Log.d(TAG, String.valueOf(total) + " lines read from configuration file");
 			   
-			   // Add some manual menus
-			   // Test to see how to activate multi line
-			   
-			   //addMenuFromLineExport("/user active");
-			   
-			   MenuObject menu1 = new MenuObject();								
-			   menu1.setPath("/user");
-			   menu1.setName("active");				
-			   menu1.setFullPath("/user active");
-			   menu1.setMultiLine(true);
-			   menuList.add(menu1);
-			   
-			   MenuObject menu2 = new MenuObject();								
-			   menu2.setPath("/interface");
-			   menu2.setName("print");				
-			   menu2.setFullPath("/interface print");
-			   menu2.setMultiLine(true);
-			   menuList.add(menu2);
-			   
-			   MenuObject menu3 = new MenuObject();								
-			   menu3.setPath("/user");
-			   menu3.setName("print");				
-			   menu3.setFullPath("/user print");
-			   menu3.setMultiLine(true);
-			   menuList.add(menu3);
-			   
-			   addMenuFromLineExport("/ip hotspot active");
-			   
-			   MenuObject menu4 = new MenuObject();								
-			   menu4.setPath("/ip hotspot active");
-			   menu4.setName("print");				
-			   menu4.setFullPath("/ip hotspot active print");			   
-			   menu4.setMultiLine(true);
-			   menu4.setProplist("user,address,uptime");
-			   menuList.add(menu4);
-			   
-			  
-			   
-//			   MenuObject menu2 = new MenuObject();								
-//			   menu2.setPath("/");
-//			   menu2.setName("user");				
-//			   menu2.setFullPath("/user");
-//			   menu2.setMultiLine(true);
-//			   menuList.add(menu2);
-		
+			   loadExtras();
 			   setParents();
 			   setFriendlyNames();
-			   
-			   MenuObject ipaddress = new MenuObject();
-			   ipaddress = this.findMenu("/ip address");
-			   // TODO Add null handling if ipaddress does not return
-			   ipaddress.setMultiLine(true);
-			   
-			   
-			   MenuObject routerboard = new MenuObject();
-			   routerboard = this.findMenu("/system routerboard");
-			   routerboard.setPrintable(true);
-			   routerboard.setMultiLine(false);
-			   
-			   MenuObject rbsettings = new MenuObject();
-			   rbsettings = this.findMenu("/system routerboard settings");
-			   rbsettings.setMultiLine(false);
-			   
-			   MenuObject store = new MenuObject();
-			   store = this.findMenu("/store");
-			   store.setMultiLine(true);
-			   
-			   MenuObject system_note = new MenuObject();
-			   system_note = this.findMenu("/system note");
-			   system_note.setMultiLine(false);
-			   
-			   
+			   modifyMultiLine();
 			   
 			} catch (FileNotFoundException e) {			 
 			   e.printStackTrace();			 
@@ -194,7 +126,7 @@ public class MikrotikCommandLoad {
 			menu.setFullPath("/" + menuName);
 			menuList.add(menu);		
 			
-////			 Add print menu everywhere
+//			Add print menu everywhere
 //			MenuObject menu2 = new MenuObject();								
 //			menu2.setPath("/" + menuName);
 //			menu2.setName("print");				
@@ -269,19 +201,21 @@ public class MikrotikCommandLoad {
 		setFriendlyName("ospf", "OSPF");
 		setFriendlyName("ppp", "PPP");
 		setFriendlyName("pppoe-client", "PPPoE-Client");
+		setFriendlyName("pptp", "PPtP");
 		setFriendlyName("radius", "RADIUS");
 		setFriendlyName("registration-table", "Registration-Table");
 		setFriendlyName("rip", "RIP");
 		setFriendlyName("routerboard", "RouterBOARD");
 		setFriendlyName("security-profiles", "Security-Profiles");
 		setFriendlyName("service-port", "Service-Port");
+		setFriendlyName("sms", "SMS");
 		setFriendlyName("snmp", "SNMP");
 		setFriendlyName("ssh", "SSH");
 		setFriendlyName("traffic-flow", "Traffic-Flow");
 		setFriendlyName("upnp", "UPnP");
 		setFriendlyName("walled-garden", "Walled-Garden");
 		setFriendlyName("wds", "WDS");		
-		setFriendlyName("web-access", "Web-Access");
+		setFriendlyName("web-access", "Web-Access");		
 	}
 	
 	/**
@@ -295,6 +229,77 @@ public class MikrotikCommandLoad {
 				m.setFriendlyName(name);
 			}
 		}
+	}
+	
+	/**
+	 * Load menu which are not normally visible with /export file=commands
+	 */
+	private void loadExtras() {
+	   
+	   MenuObject menu1 = new MenuObject();								
+	   menu1.setPath("/user");
+	   menu1.setName("active");				
+	   menu1.setFullPath("/user active");
+	   menu1.setMultiLine(true);
+	   menuList.add(menu1);
+	   
+	   addMenuFromLineExport("/interface wireless registration-table");
+	   addMenuFromLineExport("/ip dns static");
+	   addMenuFromLineExport("/ip dns static");
+	   addMenuFromLineExport("/ip dns cache");
+	   
+	   addMenuFromLineExport("/ip hotspot active");
+	   
+	   
+	   	  
+	}
+	
+	private void modifyMultiLine() {
+		
+		MenuObject ip_hotspot_active = new MenuObject();
+		ip_hotspot_active = this.findMenu("/ip hotspot active");		 			   
+		ip_hotspot_active.setMultiLine(true);
+		ip_hotspot_active.setProplist("user,address,uptime");
+		ip_hotspot_active.setPrintable(true);
+		
+		MenuObject ip_address = new MenuObject();		   
+		ip_address = this.findMenu("/ip address");
+		// TODO Add null handling if ip address does not return
+		ip_address.setMultiLine(true);
+	   			   
+		MenuObject system_routerboard = new MenuObject();
+		system_routerboard = this.findMenu("/system routerboard");
+		system_routerboard.setPrintable(true);
+		system_routerboard.setMultiLine(false);
+	   
+		MenuObject system_routerbaord_settings = new MenuObject();
+		system_routerbaord_settings = this.findMenu("/system routerboard settings");
+		system_routerbaord_settings.setMultiLine(false);
+		system_routerbaord_settings.setFinalNode(true);
+	   
+		MenuObject store = new MenuObject();
+		store = this.findMenu("/store");
+		store.setMultiLine(true);
+	   
+		MenuObject system_note = new MenuObject();
+		system_note = this.findMenu("/system note");
+		system_note.setMultiLine(false);
+		
+		MenuObject _interface = new MenuObject();
+		_interface = this.findMenu("/interface");
+		_interface.setPrintable(true);
+		_interface.setMultiLine(true);
+		
+		MenuObject _interface_wireless = new MenuObject();
+		_interface_wireless = this.findMenu("/interface wireless");
+		_interface_wireless.setPrintable(true);
+		_interface_wireless.setMultiLine(true);
+		
+		MenuObject user = new MenuObject();
+		user = this.findMenu("/user");
+		user.setPrintable(true);
+		user.setMultiLine(true);
+		   
 	}
 	
 	public MenuList getMenus() {

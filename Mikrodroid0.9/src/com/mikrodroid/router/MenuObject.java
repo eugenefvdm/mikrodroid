@@ -247,7 +247,7 @@ public class MenuObject {
 	
 	/**
 	 * The idea behind this method was to determine is a menu has children, this is useful in navigation.
-	 * This should really be set programatically. But what about isFinalNode?
+	 * This should really be set programmatically. But what about isFinalNode?
 	 * @return
 	 */
 	public boolean hasChildren() {

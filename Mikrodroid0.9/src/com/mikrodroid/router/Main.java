@@ -153,7 +153,11 @@ public class Main extends ListActivity {
 			startActivityForResult(i1, ACTIVITY_EDIT_DEVICE);
 			return true;	
 		case MENU_BOOTSTRAP_MIKROTIK_MENU:
-			if (MikrotikApi.getExportFile(mCommandFileName) == true) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			String ipAddress = prefs.getString("setting_bootstrap_ip", "");
+			String username = prefs.getString("setting_bootstrap_username", "");
+        	String password = prefs.getString("setting_bootstrap_password", "");        
+			if (MikrotikApi.getExportFile(mCommandFileName, ipAddress, username, password) == true) {
 				Toast.makeText(this, "Successfully retrieved menus", Toast.LENGTH_LONG).show();
 				mMenuBootFileExists = true;
 			} else {
@@ -189,8 +193,7 @@ public class Main extends ListActivity {
 				Log.d(TAG, "MikroTik boot menu file does not exist");
 				Toast.makeText(this, getString(R.string.error_boot_menu_first), Toast.LENGTH_LONG).show();
 				return true;
-			}
-			
+			}			
 		case CTX_MENU_EDIT:
 			Intent i1 = new Intent(this, EditDevice.class);
 			i1.putExtra(DevicesDbAdapter.KEY_DEVICES_DEVICE_ID, id);
@@ -215,24 +218,21 @@ public class Main extends ListActivity {
 		String password;		
 				
 		int apiPort;
-		
-        // Initialise the preference manager
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Cursor device = mDbHelper.fetchDevice(id);
         startManagingCursor(device);
         
         mDeviceName = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_NAME));
         ipAddress = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_IP_ADDRESS));        
-        status = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));
-		
+        status = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_STATUS));		
         // Assign device type. This will determine if we can log in or now
         deviceType = device.getString(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_TYPE));
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         // Get the API port and parse it as an integer
         apiPort = Integer.parseInt(prefs.getString("setting_api_port", "8728"));
         
-        useGlobalLogin = device.getInt(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USE_GLOBAL_LOGIN));
-        
+        useGlobalLogin = device.getInt(device.getColumnIndexOrThrow(DevicesDbAdapter.KEY_DEVICES_USE_GLOBAL_LOGIN));        
         if (useGlobalLogin == 1) {        
         	username = prefs.getString("pref_global_username", "");
         	password = prefs.getString("pref_global_password", "");        
@@ -322,6 +322,20 @@ public class Main extends ListActivity {
 			}
 		}
 		return result;
+	}
+	
+	/* 
+	 * 
+	 * Trying to get rid of database exception close() was never explicitly called on database
+	 * http://stackoverflow.com/questions/4464892/android-error-close-was-never-explicitly-called-on-database
+	 * 
+	 */
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mDbHelper != null) {
+			mDbHelper.close();
+		}
 	}
 	
 	/**

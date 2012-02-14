@@ -58,7 +58,7 @@ public class AsyncOutput extends ListActivity {
 	 */
 	private boolean isMultiLine = false;
 	
-	private boolean isFinalMenu = false;
+	private boolean isPrintable = false;
 	
 	private String ipAddress;
 	
@@ -89,10 +89,9 @@ public class AsyncOutput extends ListActivity {
 			this.isMultiLine = true;
 		}
 		
-		// Is this menu has no children then add a flag to do an automatic print
-		// The If statement was copied from NavigationChildren 
+		// If this menu has no children then add a flag to do an automatic print 
 		if (mCurrentMenu.getChildren(Main.menuList).size() == 0 || mCurrentMenu.getPrintable() == true) {			
-			this.isFinalMenu = true;
+			this.isPrintable = true;
 		}
 		
 		mItemListView = getListView(); 
@@ -103,11 +102,13 @@ public class AsyncOutput extends ListActivity {
 		
 		//String menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
 		
-		String propList = mCurrentMenu.getPropList();
-		
+		String propList = mCurrentMenu.getPropList();		
 		if (propList != null) {
-			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "\n=.proplist=.id," + propList;	
-		} else if (this.isFinalMenu ==true) {
+			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "\n=.proplist=.id," + propList;
+		}
+		
+		
+		if (this.isPrintable == true) {
 			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
 		} else {
 			Log.v(TAG, "Calling getCommandHieracrhy(mCurrentMenu)");
@@ -119,7 +120,7 @@ public class AsyncOutput extends ListActivity {
 		menuCommand = menuCommand + "\n.tag=1";		
 		// menuCommand = "/tool/ping\n=address=192.168.0.2";
 		// menuCommand = "/interface/monitor-traffic\n=interface=uplink";
-		Log.d(TAG, menuCommand);		
+		Log.v(TAG, menuCommand);		
 		Main.apiConn.sendCommand(menuCommand);
 		
 		registerForContextMenu(getListView());

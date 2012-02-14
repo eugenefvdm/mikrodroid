@@ -66,7 +66,6 @@ public class Navigation extends ListActivity {
 		
 		setContentView(R.layout.menu_list);
 		
-		Log.d(TAG, "Getting extras");
 		Bundle b = getIntent().getExtras();			
 		mIpAddress = b.getString("ipAddress");		
 		mName = b.getString("name");
@@ -75,26 +74,25 @@ public class Navigation extends ListActivity {
 		if (firstLaunch == true) {			
 			Log.v(TAG, "Root level navigation active");
 			setTitle(mIpAddress + " (" + mName + ")"); // Original code from NavigationRoot			
-			//mSecondLevelNav = Main.currentMenu.getChildren(Main.menuList);
-			//Main.currentMenu = Main.rootMenuList.get(position);
 		} else {
 			Log.v(TAG, "Second level navigation active");
 			setTitle(mIpAddress + Main.currentMenu.getBreadCrumb(Main.currentMenu));
+			
 			mSecondLevelNav = Main.currentMenu.getChildren(Main.menuList);
 			
 			Log.d(TAG, "Navigation to " + Main.currentMenu.getName() + " menu");
 			
-			if (mSecondLevelNav.size() == 0) {
-				Log.v(TAG, "In constructor menu has no children");
+			//if (mSecondLevelNav.size() == 0) {
+				//Log.v(TAG, "In constructor menu has no children");
 				// Toast.makeText(this, "Menu has no children", Toast.LENGTH_SHORT).show();
 				// Main.currentMenu = menu;
-				Intent i = new Intent(this, AsyncOutput.class);
-				i.putExtra("ipAddress", this.mIpAddress);
-				startActivity(i);
+				//Intent i = new Intent(this, AsyncOutput.class);
+				//i.putExtra("ipAddress", this.mIpAddress);
+				//startActivity(i);
 //				mChildMenuList = Main.currentMenu.addPrintItem(mChildMenuList);
-			}
+			//}
+			
 			// isPrintable has not been activated for now
-
 			if (Main.currentMenu.isPrintable) {
 				Log.v(TAG, "This menu is printable");
 				mSecondLevelNav = Main.currentMenu.addPrintItem(mSecondLevelNav);
@@ -127,19 +125,20 @@ public class Navigation extends ListActivity {
 			menu = mSecondLevelNav.get(position);
 		}
 		
-		if (menu.getChildren(Main.menuList).size() == 0) {
+		if (menu.getName() == "PRINT") {
+			Log.d(TAG, "This is a PRINT node");
+			// TODO menu and mCurrentMenu is used crossed here, why?
+			Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 			
+			Intent i = new Intent(this, AsyncOutput.class);
+			i.putExtra("ipAddress", mIpAddress);
+			startActivity(i);
+			//finish();
+		} else if (menu.getChildren(Main.menuList).size() == 0) {
 			Main.currentMenu = menu;
 			Log.d(TAG, "Menu has no children skipping to output");
 			Intent i = new Intent(this, AsyncOutput.class);
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);				
-		} else if (menu.getName() == "PRINT") {
-			Log.d(TAG, "This is a PRINT node");
-			// TODO menu and mCurrentMenu is used crossed here, why?
-			Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 
-			Intent i = new Intent(this, AsyncOutput.class);
-			i.putExtra("ipAddress", mIpAddress);
-			startActivity(i);						
 		} else if (menu.getFinalNode()) {
 			Log.d(TAG, "This is a final node");
 			Main.currentMenu = menu;
@@ -147,7 +146,7 @@ public class Navigation extends ListActivity {
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);		
 		} else { // Iterate to self		
-			Log.d(TAG, "Iterating to self");
+			Log.v(TAG, "Iterating to self");
 			Main.currentMenu = menu;
 			Intent i = new Intent(this, Navigation.class);
 			i.putExtra("ipAddress", this.mIpAddress);
