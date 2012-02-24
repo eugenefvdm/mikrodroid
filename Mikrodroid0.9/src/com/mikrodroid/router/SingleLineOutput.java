@@ -43,6 +43,11 @@ public class SingleLineOutput extends ListActivity {
 	private static final int MENU_FILTER = Menu.FIRST;
 	
 	private String ipAddress;
+	
+	/**
+	 * ID field determines which API ID to retrieve
+	 */
+	private String id;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +56,16 @@ public class SingleLineOutput extends ListActivity {
 		
 		Bundle bundle = getIntent().getExtras(); //Get the intent's extras	
 		
-		ipAddress = bundle.getString("ipAddress");	
+		ipAddress = bundle.getString("ipAddress");
+		ipAddress = bundle.getString("id");
+		
 		mCurrentMenu = Main.currentMenu;
 		setTitle(ipAddress + mCurrentMenu.getBreadCrumb(mCurrentMenu));		
 		
 		mCollectionListView = getListView(); 
 		ConfigCollection singleItem = bundle.getParcelable("collection");						
 		mItemValueList = singleItem.getAllItems();			 
-		SingleLineOutput.this.mSingleRowAdapter = new ItemValueAdapter(SingleLineOutput.this, R.layout.single_row_config, mItemValueList);		
+		SingleLineOutput.this.mSingleRowAdapter = new ItemValueAdapter(SingleLineOutput.this, R.layout.config_single_row, mItemValueList);		
 		mCollectionListView.setAdapter(mSingleRowAdapter);
 		
 		registerForContextMenu(getListView());
@@ -75,7 +82,7 @@ public class SingleLineOutput extends ListActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.single_row_config, null);			
+			v = vi.inflate(R.layout.config_single_row, null);			
 			ConfigItem param = mItemValueList.get(position);
 			TextView item = (TextView) v.findViewById(R.id.item);			
 			TextView value = (TextView) v.findViewById(R.id.value);			

@@ -2,10 +2,18 @@
 
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/vertical_container"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
 >
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/table_output"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >    
+	</TableLayout>
     
     <ListView
     	android:id="@android:id/list"

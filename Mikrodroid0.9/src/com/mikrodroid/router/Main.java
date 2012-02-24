@@ -324,8 +324,7 @@ public class Main extends ListActivity {
 		return result;
 	}
 	
-	/* 
-	 * 
+	/*  
 	 * Trying to get rid of database exception close() was never explicitly called on database
 	 * http://stackoverflow.com/questions/4464892/android-error-close-was-never-explicitly-called-on-database
 	 * 

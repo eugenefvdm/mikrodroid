@@ -1,6 +1,10 @@
 /**
  * 
- * AsyncOutput.java
+ * OutputAsync.java
+ * 
+ * TODO Implement menuCommand = "/tool/ping\n=address=192.168.0.2";
+ * TODO Implement menuCommand = "/interface/monitor-traffic\n=interface=uplink";
+ * TODO Both commands can run
  * 
  */
 package com.mikrodroid.router;
@@ -24,18 +28,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TableRow;
+//import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikrodroid.router.api.MikrotikApi;
 
 /**
- * Asynchronous class that interrogates a MikroTik device and displays it's configuration information
+ * Asynchronous class that queries the MikroTik API device and displays it's configuration information
  *
  */
-public class AsyncOutput extends ListActivity {
+public class OutputAsync extends ListActivity {
 	
-	private static final String TAG = "AsyncOutput";
+	private static final String TAG = "OutputAsync";
 		
 	private AsyncReceiver task = null;
 	
@@ -70,13 +76,14 @@ public class AsyncOutput extends ListActivity {
 	private MenuObject mCurrentMenu;
 	
 	private static final int MENU_FILTER = Menu.FIRST;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		String menuCommand;
-		
+				
+		//setContentView(R.layout.config_multi_row);
 		setContentView(R.layout.output);
 		
 		Bundle b = getIntent().getExtras();
@@ -100,26 +107,23 @@ public class AsyncOutput extends ListActivity {
 		task = new AsyncReceiver(Main.apiConn);
 		task.execute();
 		
-		//String menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
-		
-		String propList = mCurrentMenu.getPropList();		
-		if (propList != null) {
-			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "\n=.proplist=.id," + propList;
-		}
-		
+		// Temporary assigning menu to variable for later manipulation
+		menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu);
 		
 		if (this.isPrintable == true) {
-			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu) + "/print";
-		} else {
-			Log.v(TAG, "Calling getCommandHieracrhy(mCurrentMenu)");
-			menuCommand = mCurrentMenu.getCommandHierarchy(mCurrentMenu);
+			menuCommand = menuCommand + "/print";
 		}
 		
+		// Filter properties
+		String propList = mCurrentMenu.getPropList();		
+		if (propList != null) {
+			Log.v(TAG, "Filtering on .proplist");			
+			menuCommand = menuCommand + "\n=.proplist=.id," + propList;
+		}		
+				
+		Toast.makeText(this, menuCommand, Toast.LENGTH_SHORT).show();
 		
-		Toast.makeText(this, menuCommand, Toast.LENGTH_SHORT).show();		
-		menuCommand = menuCommand + "\n.tag=1";		
-		// menuCommand = "/tool/ping\n=address=192.168.0.2";
-		// menuCommand = "/interface/monitor-traffic\n=interface=uplink";
+		menuCommand = menuCommand + "\n.tag=1";				
 		Log.v(TAG, menuCommand);		
 		Main.apiConn.sendCommand(menuCommand);
 		
@@ -165,16 +169,105 @@ public class AsyncOutput extends ListActivity {
 	public void processAsyncTask(String result) {		
 		ConfigList list = getConfigList(result);
 		if (isMultiLine) {			
-			ArrayList<ConfigCollection> mParamsList = list.getAllItems();			
-			//AsyncOutput.this.mMultiRowAdapter = new ParamsAdapter(AsyncOutput.this, R.layout.multi_row_config, mParamsList);
-			mMultiRowAdapter = new ParamsAdapter(AsyncOutput.this, R.layout.multi_row_config2, mParamsList);
+			ArrayList<ConfigCollection> mParamsList = list.getAllItems();
+			// Once we have a list of parameters we build the layout according to size
+			//buildLayout(mParamsList.get(0).getAllItems().size());
+			mMultiRowAdapter = new ParamsAdapter(this, R.layout.config_multi_row_2, mParamsList);			
 			mCollectionListView.setAdapter(mMultiRowAdapter);			
 		} else {
 			ConfigCollection singleItem = list.getItem(0);
 			mItemValueList = singleItem.getAllItems();			 
-			AsyncOutput.this.mSingleRowAdapter = new ItemValueAdapter(AsyncOutput.this, R.layout.single_row_config, mItemValueList);
+			OutputAsync.this.mSingleRowAdapter = new ItemValueAdapter(OutputAsync.this, R.layout.config_single_row, mItemValueList);
 			mItemListView.setAdapter(mSingleRowAdapter);				
 		}
+	}
+	
+	/**
+	 * Custom Array Adapter with a view that displays multi-line item/value pairs 
+	 */
+	private class ParamsAdapter extends ArrayAdapter<ConfigCollection> {
+
+		private ArrayList<ConfigCollection> objectList;		
+
+		public ParamsAdapter(Context context, int textViewResourceId, ArrayList<ConfigCollection> objectList) {
+			super(context, textViewResourceId, objectList);
+			this.objectList = objectList;
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {						
+			TextView tv1 = null, tv2, tv3;			
+			ConfigCollection collection = objectList.get(position);
+			ArrayList<ConfigItem> itemList = collection.getAllItems();				
+			int numItems = itemList.size();
+			ConfigItem[] param = new ConfigItem[numItems];
+			
+			//Log.v(TAG, "Number of items to inflate: " + numItems);			
+			for (int i = 0; i < numItems; i++) {
+				param[i] = itemList.get(i);
+			}						
+			View v = convertView;
+			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			// TODO Temporary fix to cater for less than 4 fields
+			if (numItems > 4) {
+				numItems = 4;
+			}
+			switch (numItems - 1) {
+			case 1:				
+				v = vi.inflate(R.layout.config_multi_row_1, null);
+				tv1 = (TextView) v.findViewById(R.id.item1);
+				tv1.setText(param[1].getValue());				
+				break;
+			case 2:				
+				v = vi.inflate(R.layout.config_multi_row_2, null);
+				tv1 = (TextView) v.findViewById(R.id.item1);
+				tv2 = (TextView) v.findViewById(R.id.item2);
+				tv1.setText(param[1].getValue());
+				tv2.setText(param[2].getValue());				
+				break;
+			case 3:				
+				v = vi.inflate(R.layout.config_multi_row_3, null);
+				tv1 = (TextView) v.findViewById(R.id.item1);
+				tv2 = (TextView) v.findViewById(R.id.item2);
+				tv3 = (TextView) v.findViewById(R.id.item3);
+				tv1.setText(param[1].getValue());
+				tv2.setText(param[2].getValue());
+				tv3.setText(param[3].getValue());								
+				break;
+			}
+			
+			tv1.setOnClickListener(new listViewClickListener(collection, param[0].getValue()));
+					
+			return v;
+		}
+		
+		class listViewClickListener implements OnClickListener {
+
+			ConfigCollection collection;
+			
+			/**
+			 * MikroTik Internal ID of list view item 
+			 */
+			String id;
+			
+			public listViewClickListener(ConfigCollection collection, String id) {
+				this.collection = collection;
+				this.id = id;
+			}
+			
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Obtaining information for " + id);
+				Bundle b = new Bundle();
+				b.putParcelable("collection", collection);				
+				Intent i = new Intent(OutputAsync.this, OutputPreferences.class);
+				i.putExtra("ipAddress", OutputAsync.this.ipAddress);
+				i.putExtra("id", id);
+				i.putExtras(b);				
+				startActivity(i);
+			}
+		}
+
 	}
 	
 	public ConfigList getConfigList(String data) {
@@ -194,8 +287,7 @@ public class AsyncOutput extends ListActivity {
 			}			
 			
 			// Start of result
-			if (line.equals("!re") || line.equals("!trap")) {
-				// Log.d(TAG, "Starting new ConfigCollection");
+			if (line.equals("!re") || line.equals("!trap")) {				
 				collection = new ConfigCollection();
 			}
 			
@@ -225,76 +317,6 @@ public class AsyncOutput extends ListActivity {
 		}
 		return null;
 	}
-	
-	/**
-	 * Custom Array Adapter with a view that displays multi-line item/value pairs 
-	 */
-	private class ParamsAdapter extends ArrayAdapter<ConfigCollection> {
-
-		private ArrayList<ConfigCollection> objectList;
-
-		public ParamsAdapter(Context context, int textViewResourceId, ArrayList<ConfigCollection> objectList) {
-			super(context, textViewResourceId, objectList);
-			this.objectList = objectList;
-		}
-		
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-
-			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.multi_row_config2, null);
-						
-			TextView tv1 = (TextView) v.findViewById(R.id.item1);
-			TextView tv2 = (TextView) v.findViewById(R.id.item2);
-			TextView tv3 = (TextView) v.findViewById(R.id.item3);
-			//TextView tv4 = (TextView) v.findViewById(R.id.item4);
-			//TextView tv5 = (TextView) v.findViewById(R.id.item5);
-									
-			ConfigCollection collection = objectList.get(position);
-
-			ArrayList<ConfigItem> itemList = collection.getAllItems();
-			
-			ConfigItem idParam = itemList.get(0);
-			ConfigItem param1 = itemList.get(1);
-			ConfigItem param2 = itemList.get(2);
-			ConfigItem param3 = itemList.get(3);
-			//ConfigItem param4 = itemList.get(4);
-			//ConfigItem param5 = itemList.get(5);
-						
-			tv1.setText(param1.getValue());
-			tv2.setText(param2.getValue());
-			tv3.setText(param3.getValue());
-			//tv4.setText(param4.getValue());
-			//tv5.setText(param5.getValue());
-			
-			if (idParam.getName().equals(".id")) {
-				tv1.setOnClickListener(new listViewClickListener(collection));
-			}
-					
-			return v;
-		}
-		
-		class listViewClickListener implements OnClickListener {
-
-			ConfigCollection collection;
-			
-			public listViewClickListener(ConfigCollection collection) {
-				this.collection = collection;				
-			}
-			
-			@Override
-			public void onClick(View v) {				
-				Bundle b = new Bundle();
-				b.putParcelable("collection", collection);				
-				Intent i = new Intent(AsyncOutput.this, SingleLineOutput.class);
-				i.putExtra("ipAddress", AsyncOutput.this.ipAddress);
-				i.putExtras(b);				
-				startActivity(i);
-			}
-		}
-
-	}
 		
 	private class ItemValueAdapter extends ArrayAdapter<ConfigItem> {
 
@@ -306,7 +328,7 @@ public class AsyncOutput extends ListActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.single_row_config, null);			
+			v = vi.inflate(R.layout.config_single_row, null);			
 			ConfigItem param = mItemValueList.get(position);
 			TextView item = (TextView) v.findViewById(R.id.item);
 			TextView value = (TextView) v.findViewById(R.id.value);
@@ -323,16 +345,20 @@ public class AsyncOutput extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);				
-		ConfigItem param = mItemValueList.get((int)id);
-		if (!mCurrentMenu.isFavouriteParam(param)) {
-			mCurrentMenu.addFavouriteParam(param);			
-			Log.d(TAG, param.name + " added to favourites");
-		} else {
-			mCurrentMenu.removeFavouriteParam(param);			
-			Log.d(TAG, param.name + " removed from favourites");			
-		}
-		mSingleRowAdapter.notifyDataSetChanged();		
+		super.onListItemClick(l, v, position, id);		
+
+		//Toast.makeText(this, "Item #" + mApiId[(int) id] + " clicked.", Toast.LENGTH_SHORT).show();
+		
+//		ConfigItem param = mItemValueList.get((int)id);
+//		if (!mCurrentMenu.isFavouriteParam(param)) {
+//			mCurrentMenu.addFavouriteParam(param);			
+//			Log.d(TAG, param.name + " added to favourites");
+//		} else {
+//			mCurrentMenu.removeFavouriteParam(param);			
+//			Log.d(TAG, param.name + " removed from favourites");			
+//		}
+//		mSingleRowAdapter.notifyDataSetChanged();
+		
 	}
 	
 	@Override

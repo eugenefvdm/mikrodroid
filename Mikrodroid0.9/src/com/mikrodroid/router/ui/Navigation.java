@@ -6,7 +6,7 @@ package com.mikrodroid.router.ui;
 
 import java.util.ArrayList;
 
-import com.mikrodroid.router.AsyncOutput;
+import com.mikrodroid.router.OutputAsync;
 import com.mikrodroid.router.Main;
 import com.mikrodroid.router.MenuObject;
 import com.mikrodroid.router.R;
@@ -129,20 +129,20 @@ public class Navigation extends ListActivity {
 			Log.d(TAG, "This is a PRINT node");
 			// TODO menu and mCurrentMenu is used crossed here, why?
 			Main.currentMenu = mCurrentMenu; // Remember current menu when navigating to print 			
-			Intent i = new Intent(this, AsyncOutput.class);
+			Intent i = new Intent(this, OutputAsync.class);
 			i.putExtra("ipAddress", mIpAddress);
 			startActivity(i);
 			//finish();
 		} else if (menu.getChildren(Main.menuList).size() == 0) {
 			Main.currentMenu = menu;
 			Log.d(TAG, "Menu has no children skipping to output");
-			Intent i = new Intent(this, AsyncOutput.class);
+			Intent i = new Intent(this, OutputAsync.class);
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);				
 		} else if (menu.getFinalNode()) {
 			Log.d(TAG, "This is a final node");
 			Main.currentMenu = menu;
-			Intent i = new Intent(this, AsyncOutput.class);
+			Intent i = new Intent(this, OutputAsync.class);
 			i.putExtra("ipAddress", this.mIpAddress);
 			startActivity(i);		
 		} else { // Iterate to self		

@@ -201,7 +201,7 @@ public class MikrotikCommandLoad {
 		setFriendlyName("ospf", "OSPF");
 		setFriendlyName("ppp", "PPP");
 		setFriendlyName("pppoe-client", "PPPoE-Client");
-		setFriendlyName("pptp", "PPtP");
+		setFriendlyName("pptp-server", "PPTP-Server");
 		setFriendlyName("radius", "RADIUS");
 		setFriendlyName("registration-table", "Registration-Table");
 		setFriendlyName("rip", "RIP");
@@ -211,6 +211,7 @@ public class MikrotikCommandLoad {
 		setFriendlyName("sms", "SMS");
 		setFriendlyName("snmp", "SNMP");
 		setFriendlyName("ssh", "SSH");
+		setFriendlyName("sstp-server", "SSTP-Server");
 		setFriendlyName("traffic-flow", "Traffic-Flow");
 		setFriendlyName("upnp", "UPnP");
 		setFriendlyName("walled-garden", "Walled-Garden");
@@ -244,16 +245,20 @@ public class MikrotikCommandLoad {
 	   menuList.add(menu1);
 	   
 	   addMenuFromLineExport("/interface wireless registration-table");
-	   addMenuFromLineExport("/ip dns static");
-	   addMenuFromLineExport("/ip dns static");
-	   addMenuFromLineExport("/ip dns cache");
-	   
+	   addMenuFromLineExport("/ip dns static");	   
+	   addMenuFromLineExport("/ip dns cache");	   
 	   addMenuFromLineExport("/ip hotspot active");
-	   
-	   
+	   addMenuFromLineExport("/queue simple");
 	   	  
 	}
 	
+	/**
+	 * Specify multi-line and other filtering parameters
+	 * 
+	 * TODO Better exception handling if multi-line is not set
+	 * TODO When you add setPrintable, you seem to be forced to use multi-line. Determine the case.
+	 * 
+	 */
 	private void modifyMultiLine() {
 		
 		MenuObject ip_hotspot_active = new MenuObject();
@@ -264,9 +269,8 @@ public class MikrotikCommandLoad {
 		
 		MenuObject ip_address = new MenuObject();		   
 		ip_address = this.findMenu("/ip address");
-		// TODO Add null handling if ip address does not return
-		ip_address.setMultiLine(true);
-	   			   
+		ip_address.setProplist("address,interface,comment");
+		
 		MenuObject system_routerboard = new MenuObject();
 		system_routerboard = this.findMenu("/system routerboard");
 		system_routerboard.setPrintable(true);
@@ -298,8 +302,24 @@ public class MikrotikCommandLoad {
 		MenuObject user = new MenuObject();
 		user = this.findMenu("/user");
 		user.setPrintable(true);
-		user.setMultiLine(true);
-		   
+		//user.setMultiLine(true);
+		
+		MenuObject ip_dns = new MenuObject();
+		ip_dns = this.findMenu("/ip dns");
+		ip_dns.setPrintable(true);		
+		ip_dns.setMultiLine(false);
+		
+		MenuObject ip_neighbor = new MenuObject();
+		ip_neighbor = this.findMenu("/ip neighbor");
+		ip_neighbor.setPrintable(true);		
+		ip_neighbor.setMultiLine(true);
+		
+		MenuObject radius = new MenuObject();
+		radius = this.findMenu("/radius");
+		radius.setProplist("address,service,timeout");
+		radius.setPrintable(true);		
+		radius.setMultiLine(true);
+		
 	}
 	
 	public MenuList getMenus() {
