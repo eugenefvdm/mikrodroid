@@ -2,13 +2,10 @@
  *  
  */
 
-package com.mikrodroid.router.ui;
+package com.mikrodroid.router;
 
 import java.util.ArrayList;
 
-import com.mikrodroid.router.OutputAsync;
-import com.mikrodroid.router.Main;
-import com.mikrodroid.router.MenuObject;
 import com.mikrodroid.router.R;
 
 import android.app.ListActivity;

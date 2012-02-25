@@ -29,7 +29,7 @@
 		<activity android:name=".ui.NavigationRoot" android:label="@string/app_name">            
         </activity>
         
-		<activity android:name=".ui.Navigation" android:label="@string/app_name">            
+		<activity android:name=".Navigation" android:label="@string/app_name">            
         </activity>
         
 		<activity

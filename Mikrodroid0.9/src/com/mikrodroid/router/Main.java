@@ -12,7 +12,6 @@ import java.util.Collections;
 
 import com.mikrodroid.router.api.*;
 import com.mikrodroid.router.db.DevicesDbAdapter;
-import com.mikrodroid.router.ui.Navigation;
 //import com.mikrodroid.router.ui.NavigationRoot;
 
 import android.app.ListActivity;
